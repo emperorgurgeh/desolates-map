@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "node-fetch": "^3.0.0",
+    "sync-fetch": "^0.3.1"
+  }
+}
