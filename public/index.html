@@ -5,25 +5,38 @@
   <link href="https://fonts.googleapis.com/css?family=Zen+Dots:400" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;500&amp;display=swap" rel="stylesheet" data-optimized-fonts="true">
   <link rel="stylesheet" href="index.css">
+  <script src="js/lib/p5.min.js"></script>
 <head>
 <body>
+<div id="search-panel" >
+  <label for="planet-no">DESOLATE search</label>
+  <span>#</span><input id="search-input" type="text" inputmode="numeric" id="planet-no" name="planet-no" maxlength="4" size="4"><button id="search-btn">GO</button>
+</div>
+
 <div id="info-panel" class="sim-info hidden">
-  Planet: <span id="planet-name"></span>
+  Planet: <span id="planet-name"></span> <button id="nav-btn">Navigate</button>
   <br>
   <img id="planet-image"/>
-  <a id="planet-link" href="#">View NFT metadata</a>
+  <a id="planet-link" href="#" target="_blank">View NFT metadata</a>
 </div>
 
 <div id="logo-overlay" >
   <h1>DESOLATEs</h1>
-  <p class="autohide-10s">Hover on a planet to get started...</p>
+  <h2 id="cluster-name"></h2>
+  <p class="autohide-10s">Zoom, search or click on a planet...</p>
 </div>
 <div id="main-container"></div>
 
 </div>
 
-<script src="lib/spacekit.js"></script>
 <script src="data/paletteToColorMap.js"></script>
-<script src="main.js"></script>
+<script src="js/helper.js"></script>
+<script src="js/lib/3dposition.js"></script>
+<script src="js/CameraMovement.js"></script>
+<script src="js/CelestialObject.js"></script>
+<script src="js/Sun.js"></script>
+<script src="js/Planet.js"></script>
+<script src="js/Cluster.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>

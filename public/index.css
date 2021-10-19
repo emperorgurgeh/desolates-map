@@ -1,7 +1,7 @@
 html, body {
   margin: 0;
   overflow: hidden;
-  font-family: sans-serif;
+  padding: 0;
 }
 
 #main-container {
@@ -9,9 +9,10 @@ html, body {
   height: 100%;
 }
 
-.sim-info {
+
+#search-panel {
   position:absolute;
-  bottom: 8px;
+  top: 8px;
   right: 8px;
   padding: 1em;
   backdrop-filter: blur(4px);
@@ -24,17 +25,32 @@ html, body {
   color: #0bffe6dd;
 }
 
-.spacekit__object-label {
-  cursor: pointer;
-  font-family: "JetBrains Mono", monospace !important;
-  font-weight: 500 !important;
-  color: 'white' !important;
-  outline: none !important;
+#search-panel input {
+  background: rgba(255, 255, 255, 0);
+  outline: 1px solid #0bffe6dd;
+  outline-offset: 0px;
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 200;
+  color: #0bffe6dd;
 }
+
 
 #info-panel {
   width: 210px;
   height: 130px;
+
+  position:absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 1em;
+  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.2);
+  outline: 2px solid #0bffe6dd;
+  outline-offset: 0px;
+
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 200;
+  color: #0bffe6dd;
 }
 
 #planet-image {
@@ -105,6 +121,15 @@ html, body {
   opacity: 98%;
   font-family: 'Zen Dots', sans-serif;
   letter-spacing: -0.2rem;
+  margin-bottom: 0;
+}
+
+#logo-overlay h2 {
+  color: #ffffffcc;
+  font-family: 'JetBrains Mono', sans-serif;
+  font-weight: 200;
+  font-size: 1em;
+  margin-top: 0;
 }
 
 #logo-overlay p {
@@ -113,6 +138,21 @@ html, body {
   font-weight: 200;
   font-size: 0.8em;
   opacity: 80%;
+}
+
+button {
+  background: rgba(255, 255, 255, 0);
+  outline: 1px solid #0bffe6dd;
+  outline-offset: 0px;
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 200;
+  color: #0bffe6dd;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0bffe6dd;
+  color: #ffffff;
 }
 
 .autohide-10s {
