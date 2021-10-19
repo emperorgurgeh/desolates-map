@@ -34,6 +34,7 @@ function loadPlanetsRec(sources, idx, planetJson) {
 }
 
 let celestialObjects = [];
+let myPlanets = [];
 function initPlanets(planetJson) {
   planetJson.forEach(function (p) {
 
@@ -67,24 +68,14 @@ function preload() {
     'data/first-mission.json',
     'data/second-mission.json',
     'data/second-mission-addendum.json',
-    'data/second-mission-second-addendum.json'
+    'data/second-mission-second-addendum.json',
+    'data/third-mission.json'
   ]);
 }
 
 function setup() {
-  // TODO: uncomment and continue
-  // const urlParams = getURLParams();
-  // const clusterRegex = /^([A-H])([0-8])+/i;
-  // if (urlParams.cluster && clusterRegex.test(urlParams.cluster)) {
-  //   cluster = new Cluster(...urlParams.cluster.match(clusterRegex).slice(1));
-  //   console.info(`cluster selected: ${cluster}`);
-  //   const CLUSTER_TITLE_ID = "#cluster-name";
-  //   select(CLUSTER_TITLE_ID).html(`${cluster.toString()} cluster`);
-  // } else {
-  //   console.info(`No cluster selected`);
-  //   const CLUSTER_TITLE_ID = "#cluster-name";
-  //   select(CLUSTER_TITLE_ID).html(`No cluster selected`);
-  // }
+  parseURLParams();
+
   canvas = createCanvas(windowWidth, windowHeight, WEBGL);
 
   cam = createCamera();
@@ -99,7 +90,23 @@ function setup() {
   // TODO: move to when planets loaded, disable input
   select("#search-btn").mouseClicked(function() {
     const query = select("#search-input").value();
-    planetSearch(query);
+    planetSearch(query, function(p) {
+      print(`Found ${p.name}`);
+      setInfoPanelTo(p, function() {
+        ongoingCamMov = new CameraMovement(cam, p.getPosVector(), 1500);
+        ongoingCamMov.start();
+      });
+
+      for (let po of celestialObjects) {
+        po.setSelected(false);
+      }
+      p.setSelected(true);
+
+      ongoingCamMov = new CameraMovement(cam, p.getPosVector(), 1500);
+      ongoingCamMov.start();
+
+      return false;
+    });
   });
 
   select("#search-input").elt.onkeypress = function(e){
@@ -108,7 +115,23 @@ function setup() {
     if (keyCode == 'Enter'){
 
       const query = select("#search-input").value();
-      planetSearch(query);
+      planetSearch(query, function(p) {
+        print(`Found ${p.name}`);
+        setInfoPanelTo(p, function() {
+          ongoingCamMov = new CameraMovement(cam, p.getPosVector(), 1500);
+          ongoingCamMov.start();
+        });
+
+        for (let po of celestialObjects) {
+          po.setSelected(false);
+        }
+        p.setSelected(true);
+
+        ongoingCamMov = new CameraMovement(cam, p.getPosVector(), 1500);
+        ongoingCamMov.start();
+
+        return false;
+      });
 
       return false;
     }
@@ -252,7 +275,7 @@ function doubleClicked() {
   }
 }
 
-function planetSearch(query) {
+function planetSearch(query, callbackFound) {
   query = query.trim();
 
   for (let o of celestialObjects) {
@@ -271,21 +294,8 @@ function planetSearch(query) {
     }
 
     if (isMatch) {
-      print(`searched for ${o.name}`);
-      setInfoPanelTo(o, function() {
-        ongoingCamMov = new CameraMovement(cam, o.getPosVector(), 1500);
-        ongoingCamMov.start();
-      });
-
-      for (let p of celestialObjects) {
-        p.setSelected(false);
-      }
-      o.setSelected(true);
-
-      ongoingCamMov = new CameraMovement(cam, o.getPosVector(), 1500);
-      ongoingCamMov.start();
-
-      break;
+      let cont = callbackFound(o);
+      if (!cont) break;
     }
 
   }
@@ -295,3 +305,39 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
+function parseURLParams() {
+
+  const urlParams = getURLParams();
+
+  if (urlParams.mypl) {
+    // TODO clean this ugly mess
+    if (!planetsDidLoad) {
+      setTimeout(function() {
+        myPlanets = urlParams.mypl.split(',');
+        myPlanets.forEach(p => {
+          planetSearch(p, (found) => found.setSelected(true));
+        });
+      }, 500)
+
+      return;
+    }
+    myPlanets = urlParams.mypl.split(',');
+    print(myPlanets);
+    myPlanets.forEach(p => {
+      planetSearch(p, (found) => found.setSelected(true));
+    });
+  }
+
+  // TODO: uncomment and continue
+  // const clusterRegex = /^([A-H])([0-8])+/i;
+  // if (urlParams.cluster && clusterRegex.test(urlParams.cluster)) {
+  //   cluster = new Cluster(...urlParams.cluster.match(clusterRegex).slice(1));
+  //   console.info(`cluster selected: ${cluster}`);
+  //   const CLUSTER_TITLE_ID = "#cluster-name";
+  //   select(CLUSTER_TITLE_ID).html(`${cluster.toString()} cluster`);
+  // } else {
+  //   console.info(`No cluster selected`);
+  //   const CLUSTER_TITLE_ID = "#cluster-name";
+  //   select(CLUSTER_TITLE_ID).html(`No cluster selected`);
+  // }
+}
