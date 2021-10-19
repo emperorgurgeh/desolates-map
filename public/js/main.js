@@ -8,7 +8,10 @@ const SKYBOX_RADIUS = 5000;
 let robotoRegFont, jetbrainsMonoFont;
 const SUN_RADIUS = 150;
 const PLANET_RADIUS = 10;
+const LOW_RES = true;
+const TEXTURE_SUFFIX = LOW_RES ? "_low_res" : "";
 let cluster;
+let canvas;
 
 
 
@@ -50,11 +53,11 @@ function initPlanets(planetJson) {
 
 let planetsDidLoad = false;
 function preload() {
-  skyboxImg = loadImage('assets/skybox/eso_milkyway.jpg');
+  skyboxImg = loadImage(`assets/skybox/eso_milkyway${TEXTURE_SUFFIX}.png`);
   sunImg = loadImage('assets/sprites/lensflare0.png');
   planetTextures = {};
   Object.keys(PALETTE_TO_COLOR_MAP).forEach( c => {
-    planetTextures[c] = loadImage(`assets/planets/${c}.png`);
+    planetTextures[c] = loadImage(`assets/planets/${c}${TEXTURE_SUFFIX}.png`);
   });
   planetSelectedTexture = loadImage(`assets/sprites/ring.png`);
 
@@ -82,8 +85,8 @@ function setup() {
   //   const CLUSTER_TITLE_ID = "#cluster-name";
   //   select(CLUSTER_TITLE_ID).html(`No cluster selected`);
   // }
-  const canvas = createCanvas(windowWidth, windowHeight, WEBGL);
-  canvas.parent('main-container');
+  canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+
   cam = createCamera();
   cam.setPosition(0, 0, 2500);
   cam.lookAt(0, 0, 0);
@@ -98,6 +101,20 @@ function setup() {
     const query = select("#search-input").value();
     planetSearch(query);
   });
+
+  select("#search-input").elt.onkeypress = function(e){
+    if (!e) e = window.event;
+    var keyCode = e.code || e.key;
+    if (keyCode == 'Enter'){
+
+      const query = select("#search-input").value();
+      planetSearch(query);
+
+      return false;
+    }
+  }
+
+  canvas.parent('#main-container');
 }
 
 
