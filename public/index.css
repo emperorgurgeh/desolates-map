@@ -9,11 +9,9 @@ html, body {
   height: 100%;
 }
 
-
 #search-panel {
   position:absolute;
-  top: 8px;
-  right: 8px;
+
   padding: 1em;
   backdrop-filter: blur(4px);
   background: rgba(255, 255, 255, 0.2);
@@ -23,6 +21,38 @@ html, body {
   font-family: "JetBrains Mono", monospace;
   font-weight: 200;
   color: #0bffe6dd;
+}
+
+@media only screen and (min-width: 801px) {
+  #search-panel {
+    top: 8px;
+    right: 8px;
+  }
+
+  #info-panel {
+    bottom: 8px;
+    right: 8px;
+  }
+
+}
+
+@media only screen and (max-width: 800px) {
+  #search-panel {
+    position:absolute;
+    bottom: 8px;
+    left: 50%;
+
+    transform: translateX(-50%);
+  }
+
+  #info-panel {
+    position:absolute;
+    top: 80px;
+    left: 50%;
+
+    transform: translateX(-50%);
+  }
+
 }
 
 #search-panel input {
@@ -36,12 +66,11 @@ html, body {
 
 
 #info-panel {
+  position:absolute;
+
   width: 210px;
   height: 130px;
 
-  position:absolute;
-  bottom: 8px;
-  right: 8px;
   padding: 1em;
   backdrop-filter: blur(4px);
   background: rgba(255, 255, 255, 0.2);

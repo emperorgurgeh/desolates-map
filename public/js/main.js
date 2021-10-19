@@ -100,6 +100,9 @@ function setup() {
   });
 }
 
+
+let framerates = [];
+let avgFrameRate = 60;
 function draw() {
   background(0, 0, 0);
 
@@ -122,6 +125,12 @@ function draw() {
 
   // Move camera
   handleCameraMovement();
+
+  framerates.push(frameRate());
+  if (framerates.length >= 200) {
+    framerates.shift();
+    avgFrameRate = framerates.reduce((a, b) => a + b) / framerates.length;
+  }
 }
 
 function drawSun() {

@@ -143,11 +143,11 @@ class Planet extends CelestialObject {
   _getLevelOfDetail(cam) {
     const distWithCam = this.getDistWithCam(cam);
     if (distWithCam < 100) {
-      return 24;
+      return avgFramerate > 30 ? 24 : 12;
     } else if (distWithCam < 500) {
-      return 12;
+      return avgFramerate > 30 ? 12 : 8;
     } else if (distWithCam < 1000) {
-      return 8;
+      return avgFramerate > 30 ? 8 : 6;
     } else {
       return 4;
     }
