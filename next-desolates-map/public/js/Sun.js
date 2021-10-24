@@ -15,4 +15,6 @@ class Sun extends CelestialObject {
     pop();
   }
 
+  isInCluster = () => true;
+
 }

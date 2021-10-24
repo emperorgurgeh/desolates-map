@@ -1,12 +1,18 @@
 class Planet extends CelestialObject {
   constructor(radius, textureImg, pos, name, image, link) {
-    super(pos);
+    super(Cluster.getTransformedPos(pos));
+    this.origCoords = pos;
     this.radius = radius;
     this.textureImg = textureImg;
     this.name = name;
     this.image = image;
     this.link = link;
     this.selected = false;
+    this.cluster = Cluster.getForPlanet({
+      x: pos[0],
+      y: pos[1],
+      z: pos[2]
+    });
   }
 
   draw(cam) {
@@ -28,6 +34,10 @@ class Planet extends CelestialObject {
     }
 
     pop();
+  }
+
+  isInCluster(cluster) {
+    return this.cluster === cluster;
   }
 
   _drawLabel(distWithCam) {
@@ -80,6 +90,9 @@ class Planet extends CelestialObject {
 
   isMouseOver(mouseX, mouseY, cam) {
     const CLICKABLE_THRESHOLD = 2000;
+
+    if (Config.cluster != this.cluster) return false;
+
     const r = this.radius,
       x = this.x,
       y = this.y,
@@ -164,7 +177,5 @@ class Planet extends CelestialObject {
         return 4;
       }
     }
-
-
   }
 }

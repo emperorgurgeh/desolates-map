@@ -1,0 +1,119 @@
+<html>
+
+<head>
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css?family=Zen+Dots:400" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;500&amp;display=swap" rel="stylesheet"
+    data-optimized-fonts="true">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/vendor/tailwind.css">
+  <link rel="stylesheet" href="index.css">
+  <script src="js/lib/p5.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <head>
+
+  <body>
+    <!--
+<div id="search-panel" >
+  <label for="planet-no">DESOLATE search</label>
+  <span>#</span><input id="search-input" type="text" inputmode="numeric" id="planet-no" name="planet-no" maxlength="4" size="4"><button id="search-btn">GO</button>
+</div>
+
+<div id="info-panel" class="sim-info hidden">
+  Planet: <span id="planet-name"></span> <button id="nav-btn">Navigate</button>
+  <br>
+  <img id="planet-image"/>
+  <a id="planet-link" href="#" target="_blank">View NFT metadata</a>
+</div>-->
+
+    <div id="main-container"></div>
+
+    <div id="logo-overlay">
+      <h1 class="text-3xl mt-4">DESOLATEs</h1>
+    </div>
+
+    <div id="nav-container" class="flex flex-col items-center justify-center h-screen hidden">
+      <div
+        class="w-auto h-auto rounded-lg py-10 px-16 backdrop-filter backdrop-blur z-10 outline-cool shadow-cool bg-faded">
+        <div class="text-center">
+          <span class="font-cool text-primary text-lg">Find your planet</span>
+        </div>
+        <div class="p-8 w-80 m-auto mb-4">
+          <div class="bg-black bg-opacity-75 flex items-center rounded-lg outline-cool">
+            <div class="p-2 pl-4">
+              <button id="search-btn" class="outline-none hover:bg-transparent">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary " fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
+            </div>
+
+            <input id="search-input" type="text" inputmode="numeric" id="planet-no" name="planet-no" maxlength="4"
+              size="5"
+              class="rounded-r-lg bg-transparent w-full py-3 pr-4 text-primary text-lg text-right font-cool placeholder-primary focus:outline-none"
+              placeholder="420">
+          </div>
+        </div>
+        <hr class="w-120 m-auto border-none h-px bg-faded mb-8" />
+        <div class="text-center mb-4">
+          <span class="font-cool text-primary text-lg">Or explore by cluster</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="flex flex-row mt-3">
+            <button id="cluster-btn-0" data-cluster="alpha"
+              class="btn-cluster outline-cool rounded-lg backdrop-filter backdrop-blur p-4 w-64 text-left mr-3 bg-faded">Alpha
+              cluster</button>
+            <button id="cluster-btn-1" data-cluster="beta"
+              class="btn-cluster outline-cool rounded-lg backdrop-filter backdrop-blur p-4 w-64 text-left ml-3 bg-faded">Beta
+              cluster</button>
+          </div>
+          <div class="flex flex-row mt-3">
+            <button id="cluster-btn-2" data-cluster="gamma"
+              class="btn-cluster outline-cool rounded-lg backdrop-filter backdrop-blur p-4 w-64 text-left mr-3 bg-faded">Gamma
+              cluster</button>
+            <button id="cluster-btn-3" data-cluster="delta"
+              class="btn-cluster outline-cool rounded-lg backdrop-filter backdrop-blur p-4 w-64 text-left ml-3 bg-faded">Delta
+              cluster</button>
+          </div>
+          <div class="flex flex-row mt-3">
+            <button id="cluster-btn-4" data-cluster="epsilon"
+              class="btn-cluster outline-cool rounded-lg backdrop-filter backdrop-blur p-4 w-64 text-left mr-3 bg-faded">Epsilon
+              cluster</button>
+            <button id="cluster-btn-5" data-cluster="zeta"
+              class="btn-cluster outline-cool rounded-lg backdrop-filter backdrop-blur p-4 w-64 text-left ml-3 bg-faded">Zeta
+              cluster</button>
+          </div>
+          <div class="flex flex-row mt-3">
+            <button id="cluster-btn-6" data-cluster="eta"
+              class="btn-cluster outline-cool rounded-lg backdrop-filter backdrop-blur p-4 w-64 text-left mr-3 bg-faded">Eta
+              cluster</button>
+            <button id="cluster-btn-7" data-cluster="theta"
+              class="btn-cluster outline-cool rounded-lg backdrop-filter backdrop-blur p-4 w-64 text-left ml-3 bg-faded">Theta
+              cluster</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+    <script src="data/paletteToColorMap.js"></script>
+    <script src="js/stages/SpaceNavigationStage.js"></script>
+    <script src="js/stages/ClusterSelectionStage.js"></script>
+    <script src="js/helper.js"></script>
+    <script src="js/lib/3dposition.js"></script>
+    <script src="js/CameraMovement.js"></script>
+    <script src="js/CelestialObject.js"></script>
+    <script src="js/Sun.js"></script>
+    <script src="js/Planet.js"></script>
+    <script src="js/Cluster.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+
+</html>

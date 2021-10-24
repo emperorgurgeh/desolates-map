@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "desolate-space-map",
     "public": "public",
     "ignore": [
       "firebase.json",

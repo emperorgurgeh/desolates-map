@@ -8,34 +8,34 @@ const SKYBOX_RADIUS = 5000;
 let robotoRegFont, jetbrainsMonoFont;
 const SUN_RADIUS = 150;
 const PLANET_RADIUS = 10;
-const LOW_RES = true;
+const LOW_RES = false;
 const TEXTURE_SUFFIX = LOW_RES ? "_low_res" : "";
-let cluster;
+
 let canvas;
 
-
+const Config = {};
 
 function loadPlanets(sources) {
   let planets = [];
-  loadPlanetsRec(sources, 0, planets);
+  _loadPlanetsRec(sources, 0, planets);
 }
 
-function loadPlanetsRec(sources, idx, planetJson) {
+function _loadPlanetsRec(sources, idx, planetJson) {
   if (idx >= sources.length) {
-    initPlanets(planetJson);
+    _initAfterPlanetsLoad(planetJson);
   } else {
     fetch(sources[idx])
       .then(response => response.json())
       .then(json => {
         planetJson = planetJson.concat(json);
-        loadPlanetsRec(sources, idx + 1, planetJson);
+        _loadPlanetsRec(sources, idx + 1, planetJson);
       });
   }
 }
 
 let celestialObjects = [];
 let myPlanets = [];
-function initPlanets(planetJson) {
+function _initAfterPlanetsLoad(planetJson) {
   planetJson.forEach(function (p) {
 
     const textureImg = planetTextures[p.attributes.palette];
@@ -49,12 +49,12 @@ function initPlanets(planetJson) {
     );
     celestialObjects.push(planet);
   });
-  planetsDidLoad = true;
+
+  parseURLParamsAndInit();
 }
 
-let planetsDidLoad = false;
 function preload() {
-  skyboxImg = loadImage(`assets/skybox/eso_milkyway${TEXTURE_SUFFIX}.png`);
+  skyboxImg = loadImage(`assets/skybox/eso_milkyway${TEXTURE_SUFFIX}.jpg`);
   sunImg = loadImage('assets/sprites/lensflare0.png');
   planetTextures = {};
   Object.keys(PALETTE_TO_COLOR_MAP).forEach( c => {
@@ -74,7 +74,8 @@ function preload() {
 }
 
 function setup() {
-  parseURLParams();
+  Config.cluster = "";
+  Config.stage = Stage.LOADING;
 
   canvas = createCanvas(windowWidth, windowHeight, WEBGL);
 
@@ -146,87 +147,26 @@ let avgFrameRate = 60;
 function draw() {
   background(0, 0, 0);
 
-  if (!planetsDidLoad) return;
-
-  cursor(CROSS);
-
-  lights();
-  ambientLight(64);
-
-  // Sky box
-  texture(skyboxImg);
-  noStroke();
-  sphere(SKYBOX_RADIUS, 24, 24);
-
-  // Planets & sun
-  // Must be sorted by distance for alpha to work
-  celestialObjects.sort((p1, p2) => p2.getDistWithCam(cam) - p1.getDistWithCam(cam));
-  celestialObjects.forEach(o => o.draw(cam));
-
-  // Move camera
-  handleCameraMovement();
+  switch (Config.stage) {
+    case Stage.LOADING:
+      // TODO implement loading screen
+      // drawLoadingScreen();
+      break;
+    case Stage.CLUSTER_SELECTION:
+      _drawClusterSelection();
+      break;
+    case Stage.CLUSTER_TRANSITION:
+      // _drawClusterTransition();
+      break;
+    case Stage.SPACE_NAVIGATION:
+      _drawSpaceNavigation();
+      break;
+  }
 
   framerates.push(frameRate());
   if (framerates.length >= 200) {
     framerates.shift();
     avgFrameRate = framerates.reduce((a, b) => a + b) / framerates.length;
-  }
-}
-
-function drawSun() {
-  push();
-  rotateY(atan2(cam.eyeX, cam.eyeZ));
-  rotateX(atan(-cam.eyeY / sqrt(pow(cam.eyeX,2) + pow(cam.eyeZ, 2))));
-  texture(sunImg);
-  plane(SUN_RADIUS, SUN_RADIUS);
-  pop();
-}
-
-let oldCamPos = [0, 0, 0];
-let ongoingCamMov;
-function handleCameraMovement() {
-  if (ongoingCamMov && !ongoingCamMov.isEnded()) {
-    ongoingCamMov.tick();
-
-    return;
-  }
-
-  orbitControl(1, 1, 0.05);
-  perspective(PI / 3, width / height, 1, SKYBOX_RADIUS * 2);
-
-  if (keyIsDown(LEFT_ARROW)) {
-    x = (0.02) * 1.0;// this regulates the speed of the movement
-  }
-
-  else if (keyIsDown(RIGHT_ARROW)) {
-    x = (0.02) * -1.0;
-  } else {
-    x = 0;
-  }
-
-  if (keyIsDown(UP_ARROW)) {
-    // y = (0.01) * 1.0;
-    zMove = -(5) * 1.0;
-  }
-
-  else if (keyIsDown(DOWN_ARROW)) {
-    // y = (0.01) * -1.0;
-    zMove = (5) * 1.0;
-  } else {
-    y = 0.0;
-    zMove = 0.0;
-  }
-
-  cam.pan(x);
-  cam.tilt(y);
-  cam.move(0, 0, zMove);
-
-  if (dist(cam.eyeX, cam.eyeY, cam.eyeZ, 0, 0, 0) > SKYBOX_RADIUS) {
-    cam.setPosition(oldCamPos[0], oldCamPos[1], oldCamPos[2]);
-  } else {
-    oldCamPos[0] = cam.eyeX;
-    oldCamPos[1] = cam.eyeY;
-    oldCamPos[2] = cam.eyeZ;
   }
 }
 
@@ -297,7 +237,6 @@ function planetSearch(query, callbackFound) {
       let cont = callbackFound(o);
       if (!cont) break;
     }
-
   }
 }
 
@@ -305,39 +244,78 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
-function parseURLParams() {
+function parseURLParamsAndInit() {
 
   const urlParams = getURLParams();
 
   if (urlParams.mypl) {
-    // TODO clean this ugly mess
-    if (!planetsDidLoad) {
-      setTimeout(function() {
-        myPlanets = urlParams.mypl.split(',');
-        myPlanets.forEach(p => {
-          planetSearch(p, (found) => found.setSelected(true));
-        });
-      }, 500)
-
-      return;
-    }
     myPlanets = urlParams.mypl.split(',');
     print(myPlanets);
+    // TODO replace for something more useful, or remove altogether
     myPlanets.forEach(p => {
       planetSearch(p, (found) => found.setSelected(true));
     });
   }
 
-  // TODO: uncomment and continue
-  // const clusterRegex = /^([A-H])([0-8])+/i;
-  // if (urlParams.cluster && clusterRegex.test(urlParams.cluster)) {
-  //   cluster = new Cluster(...urlParams.cluster.match(clusterRegex).slice(1));
-  //   console.info(`cluster selected: ${cluster}`);
-  //   const CLUSTER_TITLE_ID = "#cluster-name";
-  //   select(CLUSTER_TITLE_ID).html(`${cluster.toString()} cluster`);
-  // } else {
-  //   console.info(`No cluster selected`);
-  //   const CLUSTER_TITLE_ID = "#cluster-name";
-  //   select(CLUSTER_TITLE_ID).html(`No cluster selected`);
-  // }
+  const clusterParam = urlParams.cluster ? urlParams.cluster.toLowerCase() : undefined;
+  if (clusterParam && Cluster.NAMES.includes(clusterParam)) {
+    Config.cluster = clusterParam;
+    console.info(`cluster selected: ${clusterParam}`);
+    changeStage(Stage.SPACE_NAVIGATION);
+  } else {
+    console.info(`No cluster selected`);
+    changeStage(Stage.CLUSTER_SELECTION);
+  }
+}
+
+const Stage = Object.freeze({
+  LOADING: 0,
+  CLUSTER_SELECTION: 1,
+  CLUSTER_TRANSITION: 2,
+  SPACE_NAVIGATION: 3,
+  toString: (idx) => Object.keys(Stage).filter(k => Stage[k] == idx)[0]
+});
+
+function changeStage(newStage) {
+  console.info(`Transitioning stages from: ${Stage.toString(Config.stage)} to ${Stage.toString(newStage)}`);
+  _cleanupStage(Config.stage);
+  _loadupStage(newStage);
+  Config.stage = newStage;
+}
+
+function _loadupStage(stage) {
+  switch (stage) {
+    case Stage.LOADING:
+      break;
+    case Stage.CLUSTER_SELECTION:
+      select("#nav-container").removeClass("hidden");
+      selectAll(".btn-cluster").forEach(b => b.mouseClicked(function(e) {
+        Config.cluster = e.target.getAttribute("data-cluster");
+        console.info(`cluster selected: ${Config.cluster}`);
+        changeStage(Stage.SPACE_NAVIGATION);
+      }));
+      break;
+    case Stage.CLUSTER_TRANSITION:
+      break;
+    case Stage.SPACE_NAVIGATION:
+      // TODO implement loading up sidebar
+      // const CLUSTER_TITLE_ID = "#cluster-name";
+      // select(CLUSTER_TITLE_ID).html(`${Cluster.getGreekLetterFromName(clusterParam)} cluster`);
+      break;
+  }
+}
+
+function _cleanupStage(stage) {
+  switch (stage) {
+    case Stage.LOADING:
+      break;
+    case Stage.CLUSTER_SELECTION:
+      // TODO remove cluster selection panel
+      select("#nav-container").addClass("hidden");
+      break;
+    case Stage.CLUSTER_TRANSITION:
+      break;
+    case Stage.SPACE_NAVIGATION:
+      break;
+  }
 }
