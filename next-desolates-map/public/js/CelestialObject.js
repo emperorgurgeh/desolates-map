@@ -19,11 +19,15 @@ class CelestialObject {
 
   setSelected() {}
 
+  isSelected() {
+    return false;
+  }
+
   getPosVector() {
     return createVector(this.x, this.y, this.z);
   }
 
   isInCluster(cluster) {
-    throw Error("isInCluster() must be implemented")
+    throw Error("isInCluster() must be implemented");
   }
 }

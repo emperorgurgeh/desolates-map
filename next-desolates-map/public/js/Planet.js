@@ -11,18 +11,27 @@ class Planet extends CelestialObject {
     this.cluster = Cluster.getForPlanet({
       x: pos[0],
       y: pos[1],
-      z: pos[2]
+      z: pos[2],
     });
   }
 
   draw(cam) {
-    const distWithCam =
-      dist(cam.eyeX, cam.eyeY, cam.eyeZ, this.x, this.y, this.z);
+    const distWithCam = dist(
+      cam.eyeX,
+      cam.eyeY,
+      cam.eyeZ,
+      this.x,
+      this.y,
+      this.z
+    );
 
     push();
     const detail = this._getLevelOfDetail(cam);
     translate(this.x, this.y, this.z);
 
+    // if (Config.stage == Stage.CLUSTER_TRANSITION) {
+    //   // tint(random([0, 255]), random([0, 255]), random([0, 255]));
+    // }
     texture(this.textureImg);
     sphere(this.radius, detail, detail);
 
@@ -41,8 +50,12 @@ class Planet extends CelestialObject {
   }
 
   _drawLabel(distWithCam) {
+    if (Config.stage != Stage.SPACE_NAVIGATION) return;
 
-    push();
+    if (distWithCam > 1500 || distWithCam < 50) {
+      return;
+    }
+
     let opacity;
     if (distWithCam > 300) {
       opacity = map(distWithCam, 1000, 1500, 255, 0);
@@ -59,9 +72,9 @@ class Planet extends CelestialObject {
     let deltaY = cam.eyeY - this.y;
     let deltaZ = cam.eyeZ - this.z;
 
+    push();
     rotateY(atan2(deltaX, deltaZ));
     rotateX(atan(-deltaY / sqrt(pow(deltaX, 2) + pow(deltaZ, 2))));
-
 
     textSize(12);
     text(this.name, 15, -15);
@@ -88,6 +101,8 @@ class Planet extends CelestialObject {
     this.selected = value;
   }
 
+  isSelected = () => this.selected;
+
   isMouseOver(mouseX, mouseY, cam) {
     const CLICKABLE_THRESHOLD = 2000;
 
@@ -110,7 +125,6 @@ class Planet extends CelestialObject {
     for (let px = x - r; px <= x + r; px += 2 * r) {
       for (let py = y - r; py <= y + r; py += 2 * r) {
         for (let pz = z - r; pz <= z + r; pz += 2 * r) {
-
           const screenPoint = screenPosition(px, py, pz);
           screenPoint.x += width / 2;
           screenPoint.y += height / 2;
@@ -143,10 +157,12 @@ class Planet extends CelestialObject {
       }
     }
 
-    if (mouseX >= smallestX &&
+    if (
+      mouseX >= smallestX &&
       mouseX <= biggestX &&
       mouseY >= smallestY &&
-      mouseY <= biggestY) {
+      mouseY <= biggestY
+    ) {
       return true;
     } else {
       return false;

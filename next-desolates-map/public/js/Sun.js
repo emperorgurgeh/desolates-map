@@ -9,12 +9,11 @@ class Sun extends CelestialObject {
   draw(cam) {
     push();
     rotateY(atan2(cam.eyeX, cam.eyeZ));
-    rotateX(atan(-cam.eyeY / sqrt(pow(cam.eyeX,2) + pow(cam.eyeZ, 2))));
+    rotateX(atan(-cam.eyeY / sqrt(pow(cam.eyeX, 2) + pow(cam.eyeZ, 2))));
     texture(this.textureImg);
     plane(this.radius, this.radius);
     pop();
   }
 
   isInCluster = () => true;
-
 }

@@ -1,10 +1,10 @@
 class CameraMovement {
-  constructor(cam, dest, durationMillis) {
+  constructor(cam, dest, durationMillis, stopBeforeDest = 100) {
     this.cam = cam;
     this.origin = createVector(cam.eyeX, cam.eyeY, cam.eyeZ);
     this.originLookAt = createVector(cam.centerX, cam.centerY, cam.centerZ);
     this.dest = dest;
-    this.distance = max(this.origin.dist(this.dest) - 100, 0);
+    this.distance = max(this.origin.dist(this.dest) - stopBeforeDest, 0);
     this.durationMillis = durationMillis;
   }
 
@@ -26,11 +26,17 @@ class CameraMovement {
       return;
     }
 
-    const curCamLookAt =
-      p5.Vector.lerp(this.originLookAt, this.dest, timeEllapsed / this.durationMillis);
+    const curCamLookAt = p5.Vector.lerp(
+      this.originLookAt,
+      this.dest,
+      timeEllapsed / this.durationMillis
+    );
     this.cam.lookAt(curCamLookAt.x + 0, curCamLookAt.y + 0, curCamLookAt.z + 0);
 
-    const movement = -1 * (curTime - this.lastTickMillis) * (this.distance / this.durationMillis)
+    const movement =
+      -1 *
+      (curTime - this.lastTickMillis) *
+      (this.distance / this.durationMillis);
     this.cam.move(0, 0, movement);
 
     this.lastTickMillis = curTime;
