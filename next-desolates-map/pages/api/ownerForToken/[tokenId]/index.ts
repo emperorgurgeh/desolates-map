@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { Connection } from "@metaplex/js";
@@ -9,64 +8,84 @@ import {
     fetchHashTable,
     parseTokenID,
 } from "../../../../utils";
+import {
+    candyMachineIds,
+    tokenIdToMintHashMap,
+} from "../../../../utils/consts";
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
     const tokenId = parseInt(req.query.tokenId as string);
+
     const rpcHost = process.env.NEXT_PUBLIC_SOLANA_NETWORK!;
     const connection = new Connection(rpcHost);
 
-    console.log("Fetching mint hashes");
-    const allMintsCandyMachine = await fetchHashTable(
-        process.env.NEXT_PUBLIC_CANDY_MACHINE_ID!,
-        true
-    );
-    console.log("Finished fetching mint hashes");
+    let mintHash = tokenIdToMintHashMap.get(tokenId);
+    console.log(mintHash);
 
-    let hasMintedToken = false;
     let tokenOwner = null;
 
-    for (let i = 0; i < allMintsCandyMachine.length; i++) {
-        if (parseTokenID(allMintsCandyMachine[i].data.data.name) === tokenId) {
-            hasMintedToken = true;
+    if (mintHash !== undefined) {
+        tokenOwner = await fetchOwnerForMintHash(connection, mintHash);
+    } else {
+        let tokenMinted = false;
 
-            const largestAccounts = await connection.getTokenLargestAccounts(
-                new PublicKey(allMintsCandyMachine[i].data.mint)
-            );
+        console.log("Fetching all mint transactions for Candy Machine");
+        const allMintsCandyMachine = await fetchHashTable(
+            candyMachineIds.get(4)!,
+            true
+        );
 
-            if (largestAccounts) {
-                const accountInfo: any = await connection.getParsedAccountInfo(
-                    largestAccounts.value[0].address
+        for (let i = 0; i < allMintsCandyMachine.length; i++) {
+            if (
+                parseTokenID(allMintsCandyMachine[i].data.data.name) === tokenId
+            ) {
+                tokenMinted = true;
+                tokenOwner = await fetchOwnerForMintHash(
+                    connection,
+                    allMintsCandyMachine[i].data.mint
                 );
-
-                tokenOwner = accountInfo.value.data?.parsed?.info?.owner;
                 break;
             }
         }
-    }
 
-    if (!hasMintedToken) {
-        res.status(404).json(
-            createErrorMessage(
-                "Token with id " + tokenId + " has not been minted"
-            )
-        );
-        return;
-    } else {
-        if (!tokenOwner) {
-            res.status(404).json(
+        if (!tokenMinted) {
+            res.status(403).json(
                 createErrorMessage(
-                    "Failed to get owner of token with id " + tokenId
+                    "Token with id " + tokenId + " has not been minted yet"
                 )
             );
             return;
-        } else {
-            res.status(200).json(
-                JSON.stringify({ ownerAddress: tokenOwner }, undefined, 4)
-            );
-            return;
         }
+    }
+
+    if (tokenOwner) {
+        res.status(200).json(
+            JSON.stringify({ ownerAddress: tokenOwner }, undefined, 4)
+        );
+        return;
+    } else {
+        res.status(404).json(
+            createErrorMessage(
+                "Failed to get owner of token with id " + tokenId
+            )
+        );
+        return;
+    }
+}
+
+async function fetchOwnerForMintHash(connection: Connection, mintHash: string) {
+    const largestAccounts = await connection.getTokenLargestAccounts(
+        new PublicKey(mintHash)
+    );
+
+    if (largestAccounts) {
+        const accountInfo: any = await connection.getParsedAccountInfo(
+            largestAccounts.value[0].address
+        );
+
+        return accountInfo.value.data?.parsed?.info?.owner;
     }
 }
