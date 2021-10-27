@@ -62,13 +62,6 @@ function preload() {
 
   robotoRegFont = loadFont("assets/fonts/Roboto-Regular.ttf");
   jetbrainsMonoFont = loadFont("assets/fonts/JetBrainsMono200.ttf");
-  loadPlanets([
-    "data/first-mission.json",
-    "data/second-mission.json",
-    "data/second-mission-addendum.json",
-    "data/second-mission-second-addendum.json",
-    "data/third-mission.json",
-  ]);
 }
 
 function setup() {
@@ -88,6 +81,14 @@ function setup() {
 
   // Must be called last for Firefox to work
   canvas.parent("#main-container");
+
+  loadPlanets([
+    "data/first-mission.json",
+    "data/second-mission.json",
+    "data/second-mission-addendum.json",
+    "data/second-mission-second-addendum.json",
+    "data/third-mission.json",
+  ]);
 }
 
 let framerates = [];
