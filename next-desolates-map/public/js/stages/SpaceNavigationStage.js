@@ -108,7 +108,10 @@ function _loadSpaceNavigationStage() {
     (o) => o.isSelected() && o.isInCluster(Config.cluster)
   );
   if (selectedPlanets.length > 0) {
-    select("#planet-info").removeClass("opacity-0").addClass("opacity-100");
+    select("#planet-info")
+      .removeClass("opacity-0")
+      .removeClass("hidden")
+      .addClass("opacity-100");
     loadPlanetInfoFor(selectedPlanets[0]);
   }
 }
@@ -126,7 +129,10 @@ function _unloadSpaceNavigationStage() {
   select("#search-btn-sidebar").mouseClicked(false);
   select("#search-input-sidebar").elt.onkeypress = null;
 
-  select("#planet-info").addClass("opacity-0").removeClass("opacity-100");
+  select("#planet-info")
+    .addClass("opacity-0")
+    .addClass("hidden")
+    .removeClass("opacity-100");
 }
 
 // TODO move to its own class?
@@ -156,7 +162,10 @@ function loadPlanetInfoFor(planet) {
     ongoingCamMov.start();
   }); // TODO do i need to remove the listener?
 
-  select("#planet-info").removeClass("opacity-0").addClass("opacity-100");
+  select("#planet-info")
+    .removeClass("opacity-0")
+    .removeClass("hidden")
+    .addClass("opacity-100");
 }
 
 function _searchForPlanetAndChangeCluster() {
