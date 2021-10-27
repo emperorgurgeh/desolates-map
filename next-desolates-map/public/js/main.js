@@ -255,9 +255,6 @@ function _loadStage(stage) {
       break;
     case Stage.SPACE_NAVIGATION:
       _loadSpaceNavigationStage();
-      // TODO implement loading up sidebar
-      // const CLUSTER_TITLE_ID = "#cluster-name";
-      // select(CLUSTER_TITLE_ID).html(`${Cluster.getGreekLetterFromName(clusterParam)} cluster`);
       break;
   }
 }

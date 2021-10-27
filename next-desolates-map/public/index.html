@@ -235,7 +235,15 @@
         id="planet-info"
         class="z-10 hidden px-3 pt-2 pb-3 text-left transition-opacity duration-1000 ease-out rounded-lg opacity-0  text-primary font-cool w-80 backdrop-filter backdrop-blur outline-cool shadow-cool bg-faded"
       >
-        <p class="mb-2 text-lg">Planet info</p>
+        <div class="relative w-full">
+          <p class="mb-2 text-lg">Planet info</p>
+          <button
+            id="nav-btn"
+            class="absolute top-0 right-0 w-16 h-6 p-1 m-auto text-sm text-center rounded-lg  outline-cool backdrop-filter backdrop-blur bg-faded"
+          >
+            VISIT
+          </button>
+        </div>
         <img
           id="planet-image"
           class="hidden w-full h-24 mb-2 rounded-lg outline-cool"
@@ -246,8 +254,14 @@
           class="w-full h-24 mb-2 rounded-lg  bg-faded animate-pulse outline-cool"
         ></div>
         <p>Name: <span id="planet-name" class="select-text"></span></p>
-        <p class="hidden">
-          Owner: <span id="planet-owner select-text	">Coming soon</span>
+        <p>
+          Owner:
+          <a
+            id="planet-owner"
+            href="#"
+            target="_blank"
+            class="underline select-text"
+          ></a>
         </p>
         <div class="flex flex-row mt-2">
           <a
@@ -258,12 +272,13 @@
             >VIEW HASH</a
           >
           <button
-            id="nav-btn"
+            id="view-nft-btn"
             class="p-2 text-center rounded-lg  w-36 outline-cool backdrop-filter backdrop-blur bg-faded"
           >
-            VISIT
+            VIEW FRENS
           </button>
         </div>
+        <div id="other-nft-list" class="flex flex-row flex-wrap mt-2"></div>
       </div>
     </div>
 
