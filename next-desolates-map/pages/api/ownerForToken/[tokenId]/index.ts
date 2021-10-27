@@ -52,9 +52,11 @@ export default async function handler(
         }
 
         if (!tokenMinted) {
-            res.status(403).json(
-                createErrorMessage(
-                    "Token with id " + tokenId + " has not been minted yet"
+            res.status(200).json(
+                JSON.stringify(
+                    { error: true, ownerAddress: null },
+                    undefined,
+                    4
                 )
             );
             return;
@@ -67,7 +69,7 @@ export default async function handler(
         );
         return;
     } else {
-        res.status(404).json(
+        res.status(500).json(
             createErrorMessage(
                 "Failed to get owner of token with id " + tokenId
             )

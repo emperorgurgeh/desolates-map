@@ -1,10 +1,12 @@
 export const candyMachineIds = new Map([
     [1, "8zbBN2kNTmgWgCedJtMqFyJo682NwoiwW87DHKHZLHyw"],
     [2, "HXGAc31mgXKbWVWHTNYSyeSfEP4C85o2MyujJNvstsbd"],
-    [3, "8zbBN2kNTmgWgCedJtMqFyJo682NwoiwW87DHKHZLHyw"],
+    [3, "CZ4wm7VUoWDtPVwCQjYWVgGTwkEt7QMgs5P154sizZuJ"],
     [4, "D79jnG7CqnsqRovCe7QfJPcqd3PtdGEDj12tWWptnqrt"],
 ]);
 
+// This is a mapping from tokenId to mint transaction hash.
+// This should be updated by fetching all mint transactions for a candy machine and adding the new mint hashes
 export const tokenIdToMintHashMap = new Map([
     [4, "3CjNcqK7rFVQhK9qjfRBUeQZedsriA6smFcDmjvFexAw"],
     [8, "GUXjci12XqJR9xmqivn12m497crbQ8sPGb3mg54VnBre"],
