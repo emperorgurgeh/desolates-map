@@ -703,3 +703,6 @@ export const tokenIdToMintHashMap = new Map([
     [491, "6bJx5qWk5tqq7exvYeHCjinXbx8rjNNTPusY8yUWAqPW"],
     [544, "966BkHsnzQXTMADzpgEY91ToYAowzV833oj1iZUSDnN1"],
 ]);
+
+// This is the standard token program provided by Solana
+export const solanaTokenProgram = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
