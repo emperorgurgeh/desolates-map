@@ -1,0 +1,81 @@
+import { Vector } from "p5";
+import SpaceRenderer from "../SpaceRenderer";
+
+export default class CameraMovement {
+    public origin: Vector;
+    public originLookAt: Vector;
+    public dest: any;
+    public distance: number;
+    public durationMillis: number;
+
+    public startTime?: number;
+    public lastTickMillis?: number;
+
+    constructor(dest: any, durationMillis: number, stopBeforeDest = 100) {
+        const cam = SpaceRenderer.getInstance().cam;
+        const p5 = SpaceRenderer.getInstance().p5!;
+
+        this.origin = p5.createVector(
+            (cam as any).eyeX,
+            (cam as any).eyeY,
+            (cam as any).eyeZ
+        );
+        this.originLookAt = p5.createVector(
+            (cam as any).centerX,
+            (cam as any).centerY,
+            (cam as any).centerZ
+        );
+        this.dest = dest;
+        this.distance = Math.max(
+            this.origin.dist(this.dest) - stopBeforeDest,
+            0
+        );
+        this.durationMillis = durationMillis;
+    }
+
+    start() {
+        const p5 = SpaceRenderer.getInstance().p5!;
+
+        this.startTime = p5.millis();
+        this.lastTickMillis = this.startTime;
+    }
+
+    isEnded() {
+        const p5 = SpaceRenderer.getInstance().p5!;
+
+        return (
+            this.startTime && p5.millis() > this.startTime + this.durationMillis
+        );
+    }
+
+    tick() {
+        const p5 = SpaceRenderer.getInstance().p5!;
+
+        const curTime = p5.millis();
+        const timeEllapsed = curTime - this.startTime!;
+
+        if (timeEllapsed > this.durationMillis) {
+            console.warn("Called tick on a camera movement that had ended");
+            return;
+        }
+
+        const curCamLookAt = (window.p5 as any).Vector.lerp(
+            this.originLookAt,
+            this.dest,
+            timeEllapsed / this.durationMillis
+        );
+
+        const cam = SpaceRenderer.getInstance().cam!;
+
+        cam.lookAt(curCamLookAt.x + 0, curCamLookAt.y + 0, curCamLookAt.z + 0);
+
+        const movement =
+            -1 *
+            (curTime - this.lastTickMillis!) *
+            (this.distance / this.durationMillis);
+        cam.move(0, 0, movement);
+
+        this.lastTickMillis = curTime;
+        return;
+    }
+}
