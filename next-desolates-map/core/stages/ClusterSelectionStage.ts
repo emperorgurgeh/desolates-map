@@ -1,9 +1,10 @@
-import SpaceRenderer from "../SpaceRenderer";
+import p5Types, { Image } from "p5";
 
-export function _drawClusterSelectionStage() {
-    const { skyboxImg, SKYBOX_RADIUS } = SpaceRenderer.getInstance();
-    const p5 = SpaceRenderer.getInstance().p5!;
-
+export function drawClusterSelectionStage(
+    p5: p5Types,
+    skyboxImg: Image,
+    skyboxRadius: number
+) {
     p5.background(0, 0, 0);
     p5.lights();
     p5.ambientLight(64);
@@ -11,7 +12,7 @@ export function _drawClusterSelectionStage() {
     // Sky box
     p5.texture(skyboxImg);
     p5.noStroke();
-    p5.sphere(SKYBOX_RADIUS, 24, 24);
+    p5.sphere(skyboxRadius, 24, 24);
 }
 
 // export function _loadClusterSelectionStage() {

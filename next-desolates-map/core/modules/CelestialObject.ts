@@ -1,4 +1,5 @@
-import SpaceRenderer from "../SpaceRenderer";
+import p5Types, { Camera, Font, Image } from "p5";
+import { Clusters, Stages } from "../../pages/_app";
 
 export default class CelestialObject {
     public x: number;
@@ -11,10 +12,7 @@ export default class CelestialObject {
         this.z = pos[2];
     }
 
-    getDistWithCam() {
-        const cam = SpaceRenderer.getInstance().cam;
-        const p5 = SpaceRenderer.getInstance().p5!;
-
+    getDistWithCam(p5: p5Types, cam: Camera) {
         return p5.dist(
             (cam as any).eyeX,
             (cam as any).eyeY,
@@ -25,11 +23,24 @@ export default class CelestialObject {
         );
     }
 
-    draw() {
+    draw(
+        p5: p5Types,
+        cam: Camera,
+        planetSelectedTexture: Image,
+        jetbrainsMonoFont: Font,
+        lowres: boolean,
+        stage: Stages
+    ) {
         throw Error("draw() must be implemented");
     }
 
-    isMouseOver(mouseX: number, mouseY: number) {
+    isMouseOver(
+        p5: p5Types,
+        cam: Camera,
+        mouseX: number,
+        mouseY: number,
+        cluster: Clusters
+    ) {
         return false;
     }
 
@@ -40,8 +51,7 @@ export default class CelestialObject {
         return false;
     }
 
-    getPosVector() {
-        const p5 = SpaceRenderer.getInstance().p5!;
+    getPosVector(p5: p5Types) {
         return p5.createVector(this.x, this.y, this.z);
     }
 

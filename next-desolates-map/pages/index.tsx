@@ -1,51 +1,45 @@
 import type { NextPage } from "next";
-import { useEffect, useState } from "react";
-import SpaceRenderer from "../core/SpaceRenderer";
+import { useContext } from "react";
+import { CSSTransition, SwitchTransition } from "react-transition-group";
+import ClusterSelection from "../components/ClusterSelection/ClusterSelection";
+import Loader from "../components/Loader/Loader";
+import SpaceNavigation from "../components/SpaceNavigation/SpaceNavigation";
+
+import { SpaceRendererContext, Stages } from "./_app";
 
 const Home: NextPage = (spaceRenderer) => {
-    const { stage, config } = SpaceRenderer.getInstance();
-    // const { stage, setStage, TEXTURE_SUFFIX, LOW_RES, SKYBOX_RADIUS } =
-    //     useConfig();
-
-    const [inputStage, setInputStage] = useState<number>(stage as any);
+    const { stage } = useContext(SpaceRendererContext);
 
     return (
         <>
-            {stage == stage.LOADING && (
-                <div className="z-10 flex items-center justify-center w-1/2 bg-red-400 h-1/2">
-                    <input
-                        type="number"
-                        min={stage[0]}
-                        max={Object.keys(stage).length}
-                        value={inputStage}
-                        onChange={(e) => {
-                            setInputStage(parseInt(e.target.value));
-                        }}
-                    />
-                    <button
-                        onClick={() => {
-                            config.changeStage(inputStage);
-                        }}
-                    >
-                        Set Stage {inputStage}
-                    </button>
-                </div>
-            )}
-            {stage == stage.CLUSTER_SELECTION && (
-                <div className="z-10 flex items-center bg-red-400 justify-centerw-1/2 h-1/2">
-                    <p>CLUSTER SELECTION</p>
-                </div>
-            )}
-            {stage == stage.CLUSTER_TRANSITION && (
-                <div className="z-10 flex items-center bg-red-400 justify-centerw-1/2 h-1/2">
-                    <p>CLUSTER TRANSITION</p>
-                </div>
-            )}
-            {stage == stage.SPACE_NAVIGATION && (
-                <div className="z-10 flex items-center bg-red-400 justify-centerw-1/2 h-1/2">
-                    <p>SPACE NAVIGATION</p>
-                </div>
-            )}
+            <h1
+                className="absolute z-10 text-3xl text-white select-none top-6"
+                style={{ fontFamily: "Zen Dots" }}
+            >
+                DESOLATEs
+            </h1>
+            <SwitchTransition>
+                <CSSTransition key={stage} classNames="fade" timeout={200}>
+                    <>
+                        {stage == Stages.LOADING && (
+                            <div className="z-10 flex items-center justify-center w-full h-full bg-black">
+                                <Loader color="border-white" />
+                            </div>
+                        )}
+                        {stage == Stages.CLUSTER_SELECTION && (
+                            <ClusterSelection />
+                        )}
+                        {stage == Stages.CLUSTER_TRANSITION && (
+                            <div className="z-10 flex items-center bg-red-400 justify-centerw-1/2 h-1/2">
+                                <p>CLUSTER TRANSITION</p>
+                            </div>
+                        )}
+                        {stage == Stages.SPACE_NAVIGATION && (
+                            <SpaceNavigation />
+                        )}
+                    </>
+                </CSSTransition>
+            </SwitchTransition>
         </>
     );
     return null;

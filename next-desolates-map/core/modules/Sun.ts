@@ -1,5 +1,4 @@
-import { Image } from "p5";
-import SpaceRenderer from "../SpaceRenderer";
+import { Camera, Image } from "p5";
 import CelestialObject from "./CelestialObject";
 
 // TODO support suns outside of (0,0,0)
@@ -7,16 +6,17 @@ import CelestialObject from "./CelestialObject";
 export default class Sun extends CelestialObject {
     public radius: number;
     public textureImg: Image;
-    constructor(radius: number, textureImg: Image, pos: any) {
+    constructor(
+        radius: number,
+        textureImg: Image,
+        pos: [number, number, number]
+    ) {
         super(pos);
         this.radius = radius;
         this.textureImg = textureImg;
     }
 
-    draw() {
-        const cam = SpaceRenderer.getInstance().cam;
-        const p5 = SpaceRenderer.getInstance().p5!;
-
+    draw(p5: any, cam: Camera) {
         p5.push();
         p5.rotateY(Math.atan2((cam as any).eyeX, (cam as any).eyeZ));
         p5.rotateX(
@@ -33,5 +33,7 @@ export default class Sun extends CelestialObject {
         p5.pop();
     }
 
-    isInCluster = () => true;
+    isInCluster() {
+        return true;
+    }
 }

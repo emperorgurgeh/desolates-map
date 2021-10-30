@@ -1,15 +1,15 @@
-import CelestialObject from "./CelestialObject";
 import { Cluster } from "./Cluster";
+import CelestialObject from "./CelestialObject";
 
-import { Image, Font } from "p5";
-import SpaceRenderer from "../SpaceRenderer";
+import p5Types, { Image, Font, Camera } from "p5";
+import { Clusters, Stages } from "../../pages/_app";
 
 export default class Planet extends CelestialObject {
     public origCoords: any;
     public radius: number;
     public textureImg: Image;
     public name: string;
-    public image: Image;
+    public image: string;
     public link: any;
     public selected: boolean;
     public cluster: string;
@@ -19,9 +19,8 @@ export default class Planet extends CelestialObject {
         textureImg: Image,
         pos: any,
         name: string,
-        image: Image,
+        image: string,
         link: any
-        // planetSelectedTexture: Image
     ) {
         super(Cluster.getTransformedPos(pos));
         this.origCoords = pos;
@@ -34,35 +33,39 @@ export default class Planet extends CelestialObject {
         this.cluster = Cluster.getForPlanet(pos[0], pos[1], pos[2]);
     }
 
-    draw() {
-        const spaceRenderer = SpaceRenderer.getInstance();
-        const p5 = SpaceRenderer.getInstance().p5!;
-
+    draw(
+        p5: p5Types,
+        cam: Camera,
+        planetSelectedTexture: Image,
+        jetbrainsMonoFont: Font,
+        lowres: boolean,
+        stage: Stages
+    ) {
         const distWithCam = p5.dist(
-            (spaceRenderer.cam as any).eyeX,
-            (spaceRenderer.cam as any).eyeY,
-            (spaceRenderer.cam as any).eyeZ,
+            (cam as any).eyeX,
+            (cam as any).eyeY,
+            (cam as any).eyeZ,
             this.x,
             this.y,
             this.z
         );
 
         p5.push();
-        const detail = this._getLevelOfDetail();
+        const detail = this._getLevelOfDetail(p5, cam, lowres);
         p5.translate(this.x, this.y, this.z);
 
         // ADD CONFIG
-        // if (Config.stage == Stage.CLUSTER_TRANSITION) {
-        //   // tint(random([0, 255]), random([0, 255]), random([0, 255]));
-        // }
+        if (stage == Stages.CLUSTER_TRANSITION) {
+            // tint(random([0, 255]), random([0, 255]), random([0, 255]));
+        }
         p5.texture(this.textureImg);
         p5.sphere(this.radius, detail, detail);
 
         // Draw labels
-        this._drawLabel(distWithCam);
+        this._drawLabel(p5, cam, distWithCam, jetbrainsMonoFont);
 
         if (this.selected) {
-            this._drawSelectionRing();
+            this._drawSelectionRing(p5, cam, planetSelectedTexture);
         }
 
         p5.pop();
@@ -72,10 +75,12 @@ export default class Planet extends CelestialObject {
         return this.cluster === cluster;
     }
 
-    _drawLabel(distWithCam: number) {
-        const spaceRenderer = SpaceRenderer.getInstance();
-        const p5 = SpaceRenderer.getInstance().p5!;
-
+    _drawLabel(
+        p5: p5Types,
+        cam: Camera,
+        distWithCam: number,
+        jetbrainsMonoFont: Font
+    ) {
         // ADD CONFIG
         // if (Config.stage != Stage.SPACE_NAVIGATION) return;
 
@@ -92,12 +97,12 @@ export default class Planet extends CelestialObject {
 
         p5.fill(255, opacity);
 
-        p5.textFont(spaceRenderer.jetbrainsMonoFont!);
+        p5.textFont(jetbrainsMonoFont!);
         p5.textAlign(p5.LEFT, p5.CENTER);
 
-        let deltaX = (spaceRenderer.cam as any).eyeX - (this.x + 20);
-        let deltaY = (spaceRenderer.cam as any).eyeY - this.y;
-        let deltaZ = (spaceRenderer.cam as any).eyeZ - this.z;
+        let deltaX = (cam as any).eyeX - (this.x + 20);
+        let deltaY = (cam as any).eyeY - this.y;
+        let deltaZ = (cam as any).eyeZ - this.z;
 
         p5.push();
         p5.rotateY(Math.atan2(deltaX, deltaZ));
@@ -114,14 +119,11 @@ export default class Planet extends CelestialObject {
         p5.pop();
     }
 
-    _drawSelectionRing() {
-        const spaceRenderer = SpaceRenderer.getInstance();
-        const p5 = SpaceRenderer.getInstance().p5!;
-
+    _drawSelectionRing(p5: p5Types, cam: Camera, planetSelectedTexture: Image) {
         p5.push();
-        let deltaX = (spaceRenderer.cam as any).eyeX - this.x;
-        let deltaY = (spaceRenderer.cam as any).eyeY - this.y;
-        let deltaZ = (spaceRenderer.cam as any).eyeZ - this.z;
+        let deltaX = (cam as any).eyeX - this.x;
+        let deltaY = (cam as any).eyeY - this.y;
+        let deltaZ = (cam as any).eyeZ - this.z;
 
         p5.rotateY(Math.atan2(deltaX, deltaZ));
         p5.rotateX(
@@ -130,8 +132,7 @@ export default class Planet extends CelestialObject {
             )
         );
 
-        //planetSelectedTexture possibly null
-        p5.texture(SpaceRenderer.getInstance().planetSelectedTexture!);
+        p5.texture(planetSelectedTexture);
         p5.plane(this.radius * 4, this.radius * 4);
         p5.pop();
     }
@@ -142,20 +143,23 @@ export default class Planet extends CelestialObject {
 
     isSelected = () => this.selected;
 
-    isMouseOver(mouseX: number, mouseY: number) {
-        const p5 = SpaceRenderer.getInstance().p5!;
-
+    isMouseOver(
+        p5: p5Types,
+        cam: Camera,
+        mouseX: number,
+        mouseY: number,
+        cluster: Clusters
+    ) {
         const CLICKABLE_THRESHOLD = 2000;
 
-        // ADD CONFIG
-        // if (Config.cluster != this.cluster) return false;
+        if (cluster != this.cluster) return false;
 
         const r = this.radius,
             x = this.x,
             y = this.y,
             z = this.z;
 
-        const distWithCam = this.getDistWithCam();
+        const distWithCam = this.getDistWithCam(p5, cam);
 
         if (distWithCam > CLICKABLE_THRESHOLD) return false;
 
@@ -212,10 +216,10 @@ export default class Planet extends CelestialObject {
         }
 
         if (
-            p5.mouseX >= smallestX &&
-            p5.mouseX <= biggestX &&
-            p5.mouseY >= smallestY &&
-            p5.mouseY <= biggestY
+            mouseX >= smallestX &&
+            mouseX <= biggestX &&
+            mouseY >= smallestY &&
+            mouseY <= biggestY
         ) {
             return true;
         } else {
@@ -223,10 +227,10 @@ export default class Planet extends CelestialObject {
         }
     }
 
-    _getLevelOfDetail() {
-        const distWithCam = this.getDistWithCam();
+    _getLevelOfDetail(p5: p5Types, cam: Camera, lowres: boolean) {
+        const distWithCam = this.getDistWithCam(p5, cam);
 
-        if (SpaceRenderer.getInstance().LOW_RES) {
+        if (lowres) {
             if (distWithCam < 100) {
                 return 12;
             } else if (distWithCam < 500) {

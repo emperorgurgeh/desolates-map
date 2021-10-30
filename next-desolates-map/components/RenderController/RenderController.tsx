@@ -1,72 +1,183 @@
 // import Sketch from "react-p5";
-import p5Types from "p5";
+import p5Types, { Camera } from "p5";
 import dynamic from "next/dynamic";
+import { useContext, useEffect } from "react";
+
+import { Clusters, SpaceRendererContext, Stages } from "../../pages/_app";
+
 import { PALETTE_TO_COLOR_MAP } from "../../utils/SpaceRenderer/consts";
+import { drawSpaceNavigationStage } from "../../core/stages/SpaceNavigationStage";
+import { drawClusterSelectionStage } from "../../core/stages/ClusterSelectionStage";
+
+import CameraMovement from "../../core/modules/CameraMovement";
+import Sun from "../../core/modules/Sun";
+import Planet from "../../core/modules/Planet";
 
 import { addScreenPositionFunction } from "../../js/lib/3dposition";
-
-import SpaceRenderer from "../../core/SpaceRenderer";
-import Sun from "../../core/modules/Sun";
-import _drawSpaceNavigationStage from "../../core/stages/SpaceNavigationStage";
-import CameraMovement from "../../core/modules/CameraMovement";
 
 const Sketch = dynamic(import("react-p5"), {
     ssr: false,
 });
 
+let framerates: Array<number> = [];
+let avgFrameRate = 60;
+
 export default function RenderController() {
+    const {
+        p5,
+        setP5,
+        textureSuffix,
+        setSkyboxImg,
+        sunRadius,
+        sunImg,
+        setSunImg,
+        planetTextures,
+        setPlanetTextures,
+        setPlanetSelectedTexture,
+        setRobotoRegFont,
+        setJetbainsMonoFont,
+        cam,
+        setCam,
+        celestialObjects,
+        setCelestialObjects,
+        stage,
+        changeStage,
+        setCluster,
+        planetRadius,
+        skyboxImg,
+        skyboxRadius,
+        ongoingCamMov,
+        setOngoingCamMov,
+        cluster,
+        planetSelectedTexture,
+        jetbrainsMonoFont,
+        lowres,
+        selectedPlanet,
+        setSelectedPlanet,
+    } = useContext(SpaceRendererContext);
+
+    function loadPlanets(sources: Array<string>) {
+        let planets: Array<any> = [];
+        _loadPlanetsRec(sources, 0, planets);
+    }
+
+    function _loadPlanetsRec(
+        sources: Array<string>,
+        idx: number,
+        planetJson: any
+    ) {
+        if (idx >= sources.length) {
+            _initAfterPlanetsLoad(planetJson);
+        } else {
+            fetch(sources[idx])
+                .then((response) => response.json())
+                .then((json) => {
+                    planetJson = planetJson.concat(json);
+                    _loadPlanetsRec(sources, idx + 1, planetJson);
+                });
+        }
+    }
+
+    async function _initAfterPlanetsLoad(planetJson: any) {
+        let celestrialRet: Array<any> = [];
+        planetJson.forEach((p: any) => {
+            const textureImg = planetTextures[p.attributes.palette];
+
+            const planet = new Planet(
+                planetRadius + Math.random(),
+                textureImg,
+                p.attributes.coords,
+                p.name.split("DESOLATEs ")[1],
+                p.image,
+                p.link
+            );
+
+            celestrialRet.push(planet);
+        });
+
+        const sun = loadSun();
+        celestrialRet.push(sun);
+
+        setCelestialObjects(celestialObjects.concat([...celestrialRet]));
+
+        parseURLParamsAndInit();
+    }
+
+    function loadSun() {
+        const sun = new Sun(sunRadius, sunImg!, [0, 0, 0]);
+        return sun;
+    }
+
+    function parseURLParamsAndInit() {
+        if (p5) {
+            const urlParams = p5.getURLParams() as any;
+
+            // if (urlParams.mypl) {
+            //     myPlanets = urlParams.mypl.split(",");
+            //     print(myPlanets);
+            //     // TODO replace for something more useful, or remove altogether
+            //     myPlanets.forEach((p) => {
+            //         planetSearch(p, (found) => found.setSelected(true));
+            //     });
+            // }
+
+            const clusterParam = urlParams.cluster
+                ? urlParams.cluster.toLowerCase()
+                : undefined;
+            //clusterParam && Cluster.NAMES.includes(clusterParam) OLD
+            if (false) {
+                setCluster(clusterParam);
+                console.info(`cluster selected: ${clusterParam}`);
+                changeStage(Stages.SPACE_NAVIGATION);
+            } else {
+                console.info(`No cluster selected`);
+                changeStage(Stages.CLUSTER_SELECTION);
+            }
+        } else {
+            console.warn("p5 not initialized in context");
+        }
+    }
+
     function preload(p5: p5Types) {
-        const spaceRenderer = SpaceRenderer.getInstance();
+        setP5(p5);
 
-        spaceRenderer.p5 = p5;
-
-        spaceRenderer.skyboxImg = p5.loadImage(
-            `assets/skybox/eso_milkyway${spaceRenderer.TEXTURE_SUFFIX}.jpg`
+        setSkyboxImg(
+            p5.loadImage(`assets/skybox/eso_milkyway${textureSuffix}.jpg`)
         );
-        spaceRenderer.sunImg = p5.loadImage("assets/sprites/lensflare0.png");
 
+        setSunImg(p5.loadImage("assets/sprites/lensflare0.png"));
+
+        let tempPlanetTextures: any = {};
         Object.keys(PALETTE_TO_COLOR_MAP).forEach((c) => {
-            spaceRenderer.planetTextures[c] = p5.loadImage(
-                `assets/planets/${c}${spaceRenderer.TEXTURE_SUFFIX}.png`
+            tempPlanetTextures[c] = p5.loadImage(
+                `assets/planets/${c}${textureSuffix}.png`
             );
         });
 
-        spaceRenderer.planetSelectedTexture = p5.loadImage(
-            `assets/sprites/ring.png`
-        );
+        setPlanetTextures(tempPlanetTextures);
 
-        spaceRenderer.robotoRegFont = p5.loadFont(
-            "assets/fonts/Roboto-Regular.ttf"
-        );
-        spaceRenderer.jetbrainsMonoFont = p5.loadFont(
-            "assets/fonts/JetBrainsMono200.ttf"
-        );
+        setPlanetSelectedTexture(p5.loadImage(`assets/sprites/ring.png`));
+
+        setRobotoRegFont(p5.loadFont("assets/fonts/Roboto-Regular.ttf"));
+        setJetbainsMonoFont(p5.loadFont("assets/fonts/JetBrainsMono200.ttf"));
     }
 
     function setup(p5: p5Types, canvasParentRef: Element) {
-        const spaceRenderer = SpaceRenderer.getInstance();
-        const { config, stage } = SpaceRenderer.getInstance();
-
-        config.changeStage(stage.LOADING);
+        // config.changeStage(stage.LOADING);
 
         p5.createCanvas(p5.windowWidth, p5.windowHeight, p5.WEBGL).parent(
             canvasParentRef
         );
 
-        spaceRenderer.cam = p5.createCamera();
-        spaceRenderer.cam.setPosition(0, 0, 2500);
-        spaceRenderer.cam.lookAt(0, 0, 0);
+        let tempCamp = p5.createCamera();
+        setCam(tempCamp);
+
+        tempCamp.setPosition(0, 0, 2500);
+        tempCamp.lookAt(0, 0, 0);
         p5.setAttributes("antialias", true);
         addScreenPositionFunction(p5);
 
-        const sun = new Sun(
-            spaceRenderer.SUN_RADIUS,
-            spaceRenderer.sunImg!,
-            [0, 0, 0]
-        );
-        spaceRenderer.celestialObjects.push(sun);
-
-        spaceRenderer.loadPlanets([
+        loadPlanets([
             "data/first-mission.json",
             "data/second-mission.json",
             "data/second-mission-addendum.json",
@@ -76,31 +187,43 @@ export default function RenderController() {
     }
 
     function draw(p5: p5Types) {
-        const spaceRenderer = SpaceRenderer.getInstance();
-        const { framerates, config, stage } = SpaceRenderer.getInstance();
-
-        switch (config.getStage()) {
-            case stage.LOADING:
+        // console.log(celestialObjects);
+        p5.background(0, 0, 0);
+        switch (stage) {
+            case Stages.LOADING:
                 // TODO implement loading screen
                 // drawLoadingScreen();
                 break;
-            case stage.CLUSTER_SELECTION:
-                // _drawClusterSelectionStage();
+            case Stages.CLUSTER_SELECTION:
+                drawClusterSelectionStage(p5, skyboxImg!, skyboxRadius);
                 break;
-            case stage.CLUSTER_TRANSITION:
+            case Stages.CLUSTER_TRANSITION:
                 // _drawClusterTransitionStage();
                 break;
-            case stage.SPACE_NAVIGATION:
-                _drawSpaceNavigationStage();
+            case Stages.SPACE_NAVIGATION:
+                drawSpaceNavigationStage(
+                    p5,
+                    cam!,
+                    skyboxImg!,
+                    skyboxRadius,
+                    celestialObjects,
+                    setCelestialObjects,
+                    ongoingCamMov,
+                    cluster,
+                    planetSelectedTexture!,
+                    jetbrainsMonoFont!,
+                    lowres,
+                    stage
+                );
                 break;
         }
 
-        _drawSpaceNavigationStage();
+        // _drawSpaceNavigationStage();
 
         framerates.push(p5.frameRate());
         if (framerates.length >= 200) {
             framerates.shift();
-            spaceRenderer.avgFrameRate =
+            avgFrameRate =
                 framerates.reduce((a, b) => a + b) / framerates.length;
         }
     }
@@ -110,17 +233,15 @@ export default function RenderController() {
     }
 
     function mouseClicked(p5: p5Types) {
-        const { celestialObjects } = SpaceRenderer.getInstance();
-
         let matches = celestialObjects.filter((o) =>
-            o.isMouseOver(p5.mouseX, p5.mouseY)
+            o.isMouseOver(p5, cam, p5.mouseX, p5.mouseY, cluster)
         );
 
         if (matches.length > 0) {
             const o = matches.pop()!;
             console.log(`clicked on ${(o as any).name}`);
 
-            // loadPlanetInfoFor(o);
+            loadPlanetInfoFor(o);
 
             for (let p of celestialObjects) {
                 p.setSelected(false);
@@ -129,31 +250,38 @@ export default function RenderController() {
         }
     }
 
-    function doubleClicked(p5: p5Types) {
-        const spaceRenderer = SpaceRenderer.getInstance();
+    async function loadPlanetInfoFor(planet: Planet) {
+        console.log(planet);
+        setSelectedPlanet(planet);
+    }
 
-        let matches = spaceRenderer.celestialObjects.filter((o) =>
-            o.isMouseOver(p5.mouseX, p5.mouseY)
+    function doubleClicked(p5: p5Types) {
+        let matches = celestialObjects.filter((o) =>
+            o.isMouseOver(p5, cam, p5.mouseX, p5.mouseY, cluster)
         );
 
         if (matches.length > 0) {
             const o = matches.pop()!;
             console.log(
-                `double clicked on ${(o as any).name} at ${o.getPosVector()}`
+                `double clicked on ${(o as any).name} at ${o.getPosVector(p5)}`
             );
 
             // loadPlanetInfoFor(o);
 
-            for (let p of spaceRenderer.celestialObjects) {
+            for (let p of celestialObjects) {
                 p.setSelected(false);
             }
             o.setSelected(true);
 
-            spaceRenderer.ongoingCamMov = new CameraMovement(
-                o.getPosVector(),
+            let tempOngoingCamMov = new CameraMovement(
+                p5,
+                cam!,
+                o.getPosVector(p5),
                 1500
             );
-            spaceRenderer.ongoingCamMov.start(p5);
+            tempOngoingCamMov.start(p5);
+
+            setOngoingCamMov(tempOngoingCamMov);
         }
     }
 
@@ -168,4 +296,132 @@ export default function RenderController() {
             doubleClicked={doubleClicked}
         />
     );
+}
+
+export function searchForPlanetAndChangeCluster(
+    query: string,
+    p5: p5Types,
+    cam: Camera,
+    setOngoingCamMov: Function,
+    celestialObjects: Array<any>,
+    setCluster: Function,
+    currentCluster: Clusters
+) {
+    planetSearch(
+        query,
+        (p: Planet) => {
+            console.log(`Found ${p.name}`);
+
+            // Set planet as selected
+            for (let po of celestialObjects) {
+                po.setSelected(false);
+            }
+            p.setSelected(true);
+
+            if (p.cluster === currentCluster) {
+                // Just move to planet
+                let tempOngoingCamMov = new CameraMovement(
+                    p5!,
+                    cam!,
+                    p.getPosVector(p5!),
+                    1500
+                );
+                tempOngoingCamMov.start(p5!);
+                setOngoingCamMov(tempOngoingCamMov);
+            } else {
+                // Change cluster
+                setCluster(p.cluster);
+            }
+
+            return false;
+        },
+        () => {
+            alert("Planet not found :sad_astronaut:");
+        },
+        celestialObjects
+    );
+}
+
+export function searchForPlanetAndChangeStage(
+    query: string,
+    p5: p5Types,
+    cam: Camera,
+    setOngoingCamMov: Function,
+    celestialObjects: Array<any>,
+    setCluster: Function,
+    changeStage: Function,
+    setSelectedPlanet: Function
+) {
+    planetSearch(
+        query,
+        function (p: Planet) {
+            console.log(`Found ${p.name}`);
+
+            // Set planet as selected
+            for (let po of celestialObjects) {
+                po.setSelected(false);
+            }
+            p.setSelected(true);
+
+            setSelectedPlanet(p);
+
+            // Select cluster
+            setCluster(p.cluster);
+
+            // Initiate a camera movement towards the planet
+            let tempOngoingCamMov = new CameraMovement(
+                p5,
+                cam,
+                p.getPosVector(p5),
+                3000,
+                125
+            );
+            tempOngoingCamMov.start(p5);
+            setOngoingCamMov(tempOngoingCamMov);
+
+            changeStage(Stages.SPACE_NAVIGATION);
+
+            return false; // Stops search
+        },
+        function () {
+            alert("Planet not found :sad_astronaut:");
+        },
+        celestialObjects
+    );
+}
+
+export function planetSearch(
+    query: string,
+    callbackFound: Function,
+    callbackNotFound: Function,
+    celestialObjects: Array<any>
+) {
+    query = query.trim();
+
+    let oneOrMoreMatches = false;
+
+    for (let o of celestialObjects) {
+        let isMatch = false;
+        if (!o.name) continue;
+
+        const oNumber = o.name.split("#")[1].trim();
+
+        for (let i = query.length; i <= oNumber.length; i++) {
+            let paddedQuery = query.padStart(i, "0");
+            if (paddedQuery === oNumber) {
+                isMatch = true;
+                oneOrMoreMatches = true;
+                break;
+            }
+        }
+
+        if (isMatch) {
+            let cont = callbackFound(o);
+            if (!cont) break;
+        }
+    }
+
+    if (!oneOrMoreMatches) {
+        callbackNotFound();
+    }
 }

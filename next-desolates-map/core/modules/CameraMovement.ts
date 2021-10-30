@@ -1,5 +1,4 @@
-import { Vector } from "p5";
-import SpaceRenderer from "../SpaceRenderer";
+import p5Types, { Camera, Vector } from "p5";
 
 export default class CameraMovement {
     public origin: Vector;
@@ -11,10 +10,13 @@ export default class CameraMovement {
     public startTime?: number;
     public lastTickMillis?: number;
 
-    constructor(dest: any, durationMillis: number, stopBeforeDest = 100) {
-        const cam = SpaceRenderer.getInstance().cam;
-        const p5 = SpaceRenderer.getInstance().p5!;
-
+    constructor(
+        p5: p5Types,
+        cam: Camera,
+        dest: any,
+        durationMillis: number,
+        stopBeforeDest = 100
+    ) {
         this.origin = p5.createVector(
             (cam as any).eyeX,
             (cam as any).eyeY,
@@ -33,24 +35,18 @@ export default class CameraMovement {
         this.durationMillis = durationMillis;
     }
 
-    start() {
-        const p5 = SpaceRenderer.getInstance().p5!;
-
+    start(p5: p5Types) {
         this.startTime = p5.millis();
         this.lastTickMillis = this.startTime;
     }
 
-    isEnded() {
-        const p5 = SpaceRenderer.getInstance().p5!;
-
+    isEnded(p5: p5Types) {
         return (
             this.startTime && p5.millis() > this.startTime + this.durationMillis
         );
     }
 
-    tick() {
-        const p5 = SpaceRenderer.getInstance().p5!;
-
+    tick(p5: p5Types, cam: Camera) {
         const curTime = p5.millis();
         const timeEllapsed = curTime - this.startTime!;
 
@@ -64,8 +60,6 @@ export default class CameraMovement {
             this.dest,
             timeEllapsed / this.durationMillis
         );
-
-        const cam = SpaceRenderer.getInstance().cam!;
 
         cam.lookAt(curCamLookAt.x + 0, curCamLookAt.y + 0, curCamLookAt.z + 0);
 
