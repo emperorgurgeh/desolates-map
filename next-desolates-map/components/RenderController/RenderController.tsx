@@ -15,6 +15,7 @@ import Planet from "../../core/modules/Planet";
 
 import { addScreenPositionFunction } from "../../js/lib/3dposition";
 import { drawClusterTransitionStage } from "../../core/stages/ClusterTransitionStage";
+import { Cluster } from "../../core/modules/Cluster";
 
 const Sketch = dynamic(import("react-p5"), {
     ssr: false,
@@ -63,6 +64,7 @@ export default function RenderController() {
         setWarpspeed,
         lastDist,
         setLastDist,
+        changeCurrentCluster,
     } = useContext(SpaceRendererContext);
 
     function loadPlanets(sources: Array<string>) {
@@ -121,21 +123,11 @@ export default function RenderController() {
         if (p5) {
             const urlParams = p5.getURLParams() as any;
 
-            // if (urlParams.mypl) {
-            //     myPlanets = urlParams.mypl.split(",");
-            //     print(myPlanets);
-            //     // TODO replace for something more useful, or remove altogether
-            //     myPlanets.forEach((p) => {
-            //         planetSearch(p, (found) => found.setSelected(true));
-            //     });
-            // }
-
             const clusterParam = urlParams.cluster
                 ? urlParams.cluster.toLowerCase()
                 : undefined;
-            //clusterParam && Cluster.NAMES.includes(clusterParam) OLD
-            if (false) {
-                setCluster(clusterParam);
+            if (clusterParam && Cluster.NAMES.includes(clusterParam)) {
+                changeCurrentCluster(clusterParam);
                 console.info(`cluster selected: ${clusterParam}`);
                 changeStage(Stages.SPACE_NAVIGATION);
             } else {
@@ -245,8 +237,6 @@ export default function RenderController() {
                 break;
         }
 
-        // _drawSpaceNavigationStage();
-
         framerates.push(p5.frameRate());
         if (framerates.length >= 200) {
             framerates.shift();
@@ -293,8 +283,6 @@ export default function RenderController() {
                 `double clicked on ${(o as any).name} at ${o.getPosVector(p5)}`
             );
 
-            // loadPlanetInfoFor(o);
-
             for (let p of celestialObjects) {
                 p.setSelected(false);
             }
@@ -331,8 +319,8 @@ export function searchForPlanetAndChangeCluster(
     cam: Camera,
     setOngoingCamMov: Function,
     celestialObjects: Array<any>,
-    setCluster: Function,
-    currentCluster: Clusters
+    currentCluster: Clusters,
+    changeCluster: Function
 ) {
     planetSearch(
         query,
@@ -357,7 +345,7 @@ export function searchForPlanetAndChangeCluster(
                 setOngoingCamMov(tempOngoingCamMov);
             } else {
                 // Change cluster
-                setCluster(p.cluster);
+                changeCluster(p.cluster, true);
             }
 
             return false;

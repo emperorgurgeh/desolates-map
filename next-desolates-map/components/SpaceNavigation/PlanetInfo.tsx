@@ -152,8 +152,12 @@ export default function PlanetInfo({
                                     </a>
                                 </Link>
                                 <button
+                                    disabled={
+                                        !selectedPlanet.ownerAddress ||
+                                        !ownerAddress
+                                    }
                                     onClick={handleToggleInhabitants}
-                                    className="p-2 text-sm text-center transition-colors duration-200 rounded-lg w-36 hover:text-white hover:bg-primary outline-cool backdrop-filter backdrop-blur bg-faded"
+                                    className="p-2 text-sm text-center transition-colors duration-200 rounded-lg disabled:opacity-50 w-36 hover:text-white hover:bg-primary outline-cool backdrop-filter backdrop-blur bg-faded"
                                     data-addr="Gi9azGeXawvDCaR5p6vHY98hMsU1BZSVZNzAdZSMP6UQ"
                                 >
                                     SEE INHABITANTS

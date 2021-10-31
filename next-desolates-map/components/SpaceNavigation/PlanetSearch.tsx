@@ -5,8 +5,15 @@ import { SpaceRendererContext } from "../../pages/_app";
 import { searchForPlanetAndChangeCluster } from "../RenderController/RenderController";
 
 export default function PlanetSearch() {
-    const { celestialObjects, cluster, p5, cam, setCluster, setOngoingCamMov } =
-        useContext(SpaceRendererContext);
+    const {
+        celestialObjects,
+        cluster,
+        p5,
+        cam,
+        setCluster,
+        setOngoingCamMov,
+        changeCurrentCluster,
+    } = useContext(SpaceRendererContext);
 
     const [planetSearchInput, setPlanetSearchInput] = useState("");
 
@@ -23,8 +30,8 @@ export default function PlanetSearch() {
                 cam!,
                 setOngoingCamMov,
                 celestialObjects,
-                setCluster,
-                cluster
+                cluster,
+                changeCurrentCluster
             );
         }
     }
