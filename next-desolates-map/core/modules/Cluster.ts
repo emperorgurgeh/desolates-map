@@ -1,5 +1,3 @@
-import Planet from "./Planet";
-
 /**
  * alpha α
  * beta β
@@ -58,21 +56,5 @@ export const Cluster = {
         };
 
         return pos.map((coord: number) => mod(coord, 1000) - 500);
-    },
-
-    changeCurrentCluster(
-        Config: any,
-        cluster: string,
-        transitionViaWarpspeed = false
-    ) {
-        // select("#cluster-image").elt.src = `assets/sprites/${cluster}.png`;
-
-        // if (transitionViaWarpspeed) {
-        //     changeStage(Stage.CLUSTER_TRANSITION);
-        // }
-
-        // TODO deselect any selected planet
-        console.info(`Changing cluster to ${cluster}`);
-        Config.cluster = cluster;
     },
 };
