@@ -1,3 +1,5 @@
+import { Clusters } from "../../pages/_app";
+
 /**
  * alpha α
  * beta β
@@ -9,45 +11,13 @@
  * theta θ
  */
 export const Cluster = {
-    NAMES: [
-        "alpha",
-        "beta",
-        "gamma",
-        "delta",
-        "epsilon",
-        "zeta",
-        "eta",
-        "theta",
-    ],
-
-    getGreekLetterFromName(name: string) {
-        switch (name) {
-            case "alpha":
-                return "α";
-            case "beta":
-                return "β";
-            case "gamma":
-                return "γ";
-            case "delta":
-                return "δ";
-            case "epsilon":
-                return "ε";
-            case "zeta":
-                return "ζ";
-            case "eta":
-                return "η";
-            case "theta":
-                return "θ";
-        }
-    },
-
     getForPlanet(x: number, y: number, z: number) {
         const clusterIdx =
             Math.ceil(x / 1000) +
             Math.ceil(y / 1000) * 2 +
             Math.ceil(z / 1000) * 4;
 
-        return Cluster.NAMES[clusterIdx];
+        return Object.values(Clusters)[clusterIdx];
     },
 
     getTransformedPos(pos: any) {

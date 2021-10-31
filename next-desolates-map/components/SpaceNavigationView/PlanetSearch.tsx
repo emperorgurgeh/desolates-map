@@ -1,6 +1,4 @@
 import { useContext, useState } from "react";
-import CameraMovement from "../../core/modules/CameraMovement";
-import Planet from "../../core/modules/Planet";
 import { SpaceRendererContext } from "../../pages/_app";
 import { searchForPlanetAndChangeCluster } from "../RenderController/RenderController";
 
@@ -10,7 +8,6 @@ export default function PlanetSearch() {
         cluster,
         p5,
         cam,
-        setCluster,
         setOngoingCamMov,
         changeCurrentCluster,
     } = useContext(SpaceRendererContext);
@@ -23,7 +20,6 @@ export default function PlanetSearch() {
 
     function handleInputKeyDown(e: any) {
         if (e.key === "Enter") {
-            console.log("ENTER PRESSED");
             searchForPlanetAndChangeCluster(
                 planetSearchInput,
                 p5!,
@@ -36,6 +32,21 @@ export default function PlanetSearch() {
         }
     }
 
+    function handleClick(e: any) {
+        e.stopPropagation();
+        e.nativeEvent.stopImmediatePropagation();
+
+        searchForPlanetAndChangeCluster(
+            planetSearchInput,
+            p5!,
+            cam!,
+            setOngoingCamMov,
+            celestialObjects,
+            cluster,
+            changeCurrentCluster
+        );
+    }
+
     return (
         <div
             id="planet-search"
@@ -46,7 +57,7 @@ export default function PlanetSearch() {
                 <div className="flex items-center bg-black bg-opacity-75 rounded-lg outline-cool">
                     <div className="p-2 pt-3.5 pl-4">
                         <button
-                            id="search-btn-sidebar"
+                            onClick={handleClick}
                             className="outline-none hover:bg-transparent"
                         >
                             <svg
@@ -67,7 +78,10 @@ export default function PlanetSearch() {
                     </div>
 
                     <input
-                        id="search-input-sidebar"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            e.nativeEvent.stopImmediatePropagation();
+                        }}
                         type="text"
                         inputMode="numeric"
                         name="planet-no"

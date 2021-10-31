@@ -7,15 +7,8 @@ export default function ClusterSelection() {
     const { cluster, setCluster, changeCurrentCluster } =
         useContext(SpaceRendererContext);
 
-    const [loadedImage, setLoadedImage] = useState(false);
-
     function handleOptionChange(e: any) {
-        console.log(e.target.value);
         changeCurrentCluster(e.target.value, true);
-    }
-
-    function handleLoadedImage() {
-        setLoadedImage(true);
     }
 
     return (
@@ -32,13 +25,12 @@ export default function ClusterSelection() {
                             className={`w-48 m-auto`}
                             src={`assets/sprites/${cluster}.png`}
                             alt={cluster}
-                            onLoadedData={handleLoadedImage}
                         />
                     </div>
                 </CSSTransition>
             </SwitchTransition>
             <select
-                value={cluster}
+                defaultValue={cluster}
                 onChange={handleOptionChange}
                 className="block w-auto mx-auto mt-4 bg-transparent outline-none cursor-pointer form-select"
             >
@@ -61,7 +53,7 @@ function ClusterSelectionOption({ clusterName }: any) {
     return (
         <option
             value={clusterName}
-            selected={clusterName === cluster}
+            // selected={clusterName === cluster}
             disabled={clusterName === cluster}
             hidden={clusterName === cluster}
         >

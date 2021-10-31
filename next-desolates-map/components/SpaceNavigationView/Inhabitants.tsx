@@ -14,24 +14,30 @@ export default function Inhabitants() {
 
     const [loading, setLoading] = useState(true);
 
+    const [mounted, setMounted] = useState(true);
+
     async function fetchNFTs() {
         setLoading(true);
         const res = await fetch(
             `/api/allNFTsForOwner/${selectedPlanet?.ownerAddress}?perPage=${PER_PAGE}&page=${page}&includeTotal=1`
         );
 
-        if (res.status === 200) {
-            const resData = await res.json();
+        if (mounted) {
+            if (res.status === 200) {
+                const resData = await res.json();
 
-            setMaxPages(Math.ceil(resData.totalCount / PER_PAGE));
-            setLoading(false);
-            setNFTs(nfts.concat(resData.nfts));
+                setMaxPages(Math.ceil(resData.totalCount / PER_PAGE));
+                setLoading(false);
+                setNFTs(nfts.concat(resData.nfts));
+            }
         }
     }
 
     useEffect(() => {
         fetchNFTs();
-        console.log(selectedPlanet);
+        return () => {
+            setMounted(false);
+        };
     }, []);
 
     useEffect(() => {
@@ -79,7 +85,7 @@ export default function Inhabitants() {
 
 function AnNFT({ image, name }: any) {
     return (
-        <div className="relative flex w-full mb-4 overflow-hidden rounded-lg">
+        <div className="relative flex w-full mb-2 overflow-hidden rounded-lg">
             <img src={image} />
 
             <p className="absolute text-xs px-0.5 bg-black text-primary top-2 left-2">

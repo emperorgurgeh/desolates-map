@@ -90,7 +90,7 @@ export default function RenderController() {
     }
 
     async function _initAfterPlanetsLoad(planetJson: any) {
-        let celestrialRet: Array<any> = [];
+        const celestialRet: Array<any> = [];
         planetJson.forEach((p: any) => {
             const textureImg = planetTextures[p.attributes.palette];
 
@@ -103,13 +103,13 @@ export default function RenderController() {
                 p.link
             );
 
-            celestrialRet.push(planet);
+            celestialRet.push(planet);
         });
 
         const sun = loadSun();
-        celestrialRet.push(sun);
+        celestialRet.push(sun);
 
-        setCelestialObjects(celestialObjects.concat([...celestrialRet]));
+        setCelestialObjects(celestialObjects.concat([...celestialRet]));
 
         parseURLParamsAndInit();
     }
@@ -126,7 +126,10 @@ export default function RenderController() {
             const clusterParam = urlParams.cluster
                 ? urlParams.cluster.toLowerCase()
                 : undefined;
-            if (clusterParam && Cluster.NAMES.includes(clusterParam)) {
+            if (
+                clusterParam &&
+                Object.values(Clusters).includes(clusterParam)
+            ) {
                 changeCurrentCluster(clusterParam);
                 console.info(`cluster selected: ${clusterParam}`);
                 changeStage(Stages.SPACE_NAVIGATION);
@@ -196,7 +199,7 @@ export default function RenderController() {
                 // drawLoadingScreen();
                 break;
             case Stages.CLUSTER_SELECTION:
-                drawClusterSelectionStage(p5, skyboxImg!, skyboxRadius);
+                drawClusterSelectionStage(p5, cam!, skyboxImg!, skyboxRadius);
                 break;
             case Stages.CLUSTER_TRANSITION:
                 drawClusterTransitionStage(
@@ -256,7 +259,7 @@ export default function RenderController() {
 
         if (matches.length > 0) {
             const o = matches.pop()!;
-            console.log(`clicked on ${(o as any).name}`);
+            console.log(`clicked on ${(o as Planet).name}`);
 
             loadPlanetInfoFor(o);
 

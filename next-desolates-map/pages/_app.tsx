@@ -79,14 +79,14 @@ interface ISpaceRenderer {
     setLastDist: Function;
 }
 
-export const enum Stages {
+export enum Stages {
     LOADING = "LOADING",
     CLUSTER_SELECTION = "CLUSTER_SELECTION",
     CLUSTER_TRANSITION = "CLUSTER_TRANSITION",
     SPACE_NAVIGATION = "SPACE_NAVIGATION",
 }
 
-export const enum Clusters {
+export enum Clusters {
     ALPHA = "alpha",
     BETA = "beta",
     GAMMA = "gamma",
@@ -183,7 +183,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             case Stages.LOADING:
                 break;
             case Stages.CLUSTER_SELECTION:
-                // _loadClusterSelectionStage();
+                // _loadClusterSelectionStage(cam!);
                 break;
             case Stages.CLUSTER_TRANSITION:
                 _loadClusterTransitionStage(
@@ -212,7 +212,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             case Stages.CLUSTER_TRANSITION:
                 _unloadClusterTransitionStage(
                     setFrozenCamCenter,
-                    setFrozenCamCenter,
+                    setFromCluster,
                     setLastDist
                 );
                 break;

@@ -27,7 +27,7 @@ export default class CelestialObject {
         p5: p5Types,
         cam: Camera,
         planetSelectedTexture: Image,
-        jetbrainsMonoFont: Font,
+        labelFont: Font,
         lowres: boolean,
         stage: Stages
     ) {

@@ -1,10 +1,7 @@
 import { useContext, useState } from "react";
 import CameraMovement from "../../core/modules/CameraMovement";
 import { Clusters, SpaceRendererContext, Stages } from "../../pages/_app";
-import {
-    searchForPlanetAndChangeCluster,
-    searchForPlanetAndChangeStage,
-} from "../RenderController/RenderController";
+import { searchForPlanetAndChangeStage } from "../RenderController/RenderController";
 
 export default function ClusterSelection() {
     const {
@@ -44,10 +41,10 @@ export default function ClusterSelection() {
     }
 
     return (
-        <div className="z-10 flex flex-col items-center w-11/12 h-auto px-3 md:px-8 lg:px-16 py-10 rounded-lg md:w-3/4 lg:w-1/2 backdrop-filter backdrop-blur outline-cool shadow-cool bg-faded max-w-[700px]">
+        <div className="select-none z-10 flex flex-col items-center w-11/12 h-auto px-3 md:px-8 lg:px-16 py-10 rounded-lg md:w-3/4 lg:w-1/2 backdrop-filter backdrop-blur outline-cool shadow-cool bg-faded max-w-[650px]">
             <p className="text-lg font-cool text-primary">Find your planet</p>
 
-            <div className="my-8 flex items-center w-full bg-black bg-opacity-75 rounded-lg max-w-[20rem] outline-cool">
+            <div className="my-8 flex items-center w-full bg-black bg-opacity-75 rounded-lg max-w-[16rem] outline-cool">
                 <div className="p-2 pt-3 pl-4">
                     <button
                         onClick={searchForPlanet}
@@ -85,7 +82,7 @@ export default function ClusterSelection() {
                 ></input>
             </div>
 
-            <hr className="h-px m-auto mb-8 border-none w-120 bg-faded" />
+            <hr className="w-full h-px m-auto mt-4 mb-8 border-none bg-faded" />
 
             <p className="mb-6 text-lg font-cool text-primary">
                 Or explore by cluster
@@ -111,23 +108,10 @@ interface IClusterButton {
 }
 
 function ClusterButton({ cluster }: IClusterButton) {
-    const {
-        changeStage,
-        ongoingCamMov,
-        setOngoingCamMov,
-        p5,
-        cam,
-        setCluster,
-        changeCurrentCluster,
-    } = useContext(SpaceRendererContext);
+    const { changeStage, setOngoingCamMov, p5, cam, changeCurrentCluster } =
+        useContext(SpaceRendererContext);
 
     function handleClick(e: any) {
-        console.log("CLUSTER SELECTED:", cluster);
-        // Cluster.changeCurrentCluster(
-        //     Config,
-        //     e.target.getAttribute("data-cluster")
-        // );
-
         changeCurrentCluster(cluster);
 
         let tempCamMov = new CameraMovement(
@@ -142,7 +126,6 @@ function ClusterButton({ cluster }: IClusterButton) {
 
         setOngoingCamMov(tempCamMov);
 
-        // TEMP
         changeStage(Stages.SPACE_NAVIGATION);
     }
 

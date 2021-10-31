@@ -10,7 +10,7 @@ export default function PlanetInfo({
     showInhabitants,
     setShowInhabitants,
 }: any) {
-    const { p5, cam, selectedPlanet, setSelectedPlanet, setOngoingCamMov } =
+    const { p5, cam, selectedPlanet, setOngoingCamMov } =
         useContext(SpaceRendererContext);
 
     const [loadingOwner, setLoadingOwner] = useState(true);
@@ -20,14 +20,14 @@ export default function PlanetInfo({
 
     async function fetchPlanetOwner() {
         const res = await fetch(
-            `/api/ownerForToken/${selectedPlanet?.name.split("#")[1]}`
+            `/api/ownerForToken/${selectedPlanet!.name.split("#")[1]}`
         );
 
         if (res.status == 200) {
             const data = await res.json();
             if (!data.error) {
                 setOwnerAddress(data.ownerAddress);
-                selectedPlanet?.setOwnerAddress(data.ownerAddress);
+                selectedPlanet!.setOwnerAddress(data.ownerAddress);
             } else {
                 setOwnerAddress(null);
             }
@@ -39,7 +39,10 @@ export default function PlanetInfo({
         setLoadingPlanetImage(false);
     }
 
-    function visitPlanet() {
+    function visitPlanet(e: any) {
+        e.stopPropagation();
+        e.nativeEvent.stopImmediatePropagation();
+
         if (selectedPlanet) {
             let tempOngoingCamMov = new CameraMovement(
                 p5!,
@@ -68,7 +71,10 @@ export default function PlanetInfo({
         }
     }, [selectedPlanet]);
 
-    function handleToggleInhabitants() {
+    function handleToggleInhabitants(e: any) {
+        e.stopPropagation();
+        e.nativeEvent.stopImmediatePropagation();
+
         setShowInhabitants(!showInhabitants);
     }
 
@@ -117,10 +123,18 @@ export default function PlanetInfo({
                             </p>
                             <p>
                                 Owner:
-                                <Link href="https://explorer.solana.com/address/Gi9azGeXawvDCaR5p6vHY98hMsU1BZSVZNzAdZSMP6UQ">
+                                <Link
+                                    href={`https://explorer.solana.com/address/${selectedPlanet?.ownerAddress}`}
+                                >
                                     <a
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            e.nativeEvent.stopImmediatePropagation();
+                                        }}
                                         target="_blank"
-                                        className="underline select-text"
+                                        className={`${
+                                            loadingOwner ? "" : "underline"
+                                        } select-text`}
                                     >
                                         {selectedPlanet?.ownerAddress ? (
                                             `${selectedPlanet?.ownerAddress.substring(
@@ -145,6 +159,10 @@ export default function PlanetInfo({
                             <div className="flex flex-row mt-2">
                                 <Link href={selectedPlanet.link}>
                                     <a
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            e.nativeEvent.stopImmediatePropagation();
+                                        }}
                                         className="p-2 mr-3 text-sm text-center transition-colors duration-200 rounded-lg hover:text-white hover:bg-primary w-36 outline-cool backdrop-filter backdrop-blur bg-faded"
                                         target="_blank"
                                     >
@@ -152,13 +170,13 @@ export default function PlanetInfo({
                                     </a>
                                 </Link>
                                 <button
-                                    disabled={
-                                        !selectedPlanet.ownerAddress ||
-                                        !ownerAddress
-                                    }
+                                    disabled={!selectedPlanet.ownerAddress}
                                     onClick={handleToggleInhabitants}
-                                    className="p-2 text-sm text-center transition-colors duration-200 rounded-lg disabled:opacity-50 w-36 hover:text-white hover:bg-primary outline-cool backdrop-filter backdrop-blur bg-faded"
-                                    data-addr="Gi9azGeXawvDCaR5p6vHY98hMsU1BZSVZNzAdZSMP6UQ"
+                                    className={`p-2 text-sm text-center transition-colors duration-200 rounded-lg disabled:opacity-50 w-36 ${
+                                        !selectedPlanet.ownerAddress
+                                            ? ""
+                                            : "hover:text-white hover:bg-primary"
+                                    } outline-cool backdrop-filter backdrop-blur bg-faded`}
                                 >
                                     SEE INHABITANTS
                                 </button>

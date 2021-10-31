@@ -1,9 +1,9 @@
 import type { NextPage } from "next";
 import { useContext } from "react";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
-import ClusterSelection from "../components/ClusterSelection/ClusterSelection";
+import ClusterSelection from "../components/ClusterSelectionView/ClusterSelection";
 import Loader from "../components/Loader/Loader";
-import SpaceNavigation from "../components/SpaceNavigation/SpaceNavigation";
+import SpaceNavigation from "../components/SpaceNavigationView/SpaceNavigation";
 
 import { SpaceRendererContext, Stages } from "./_app";
 

@@ -1,14 +1,14 @@
 import p5Types, { Camera, Vector } from "p5";
 
 export default class CameraMovement {
-    public origin: Vector;
-    public originLookAt: Vector;
-    public dest: any;
-    public distance: number;
-    public durationMillis: number;
+    private origin: Vector;
+    private originLookAt: Vector;
+    private dest: any;
+    private distance: number;
+    private durationMillis: number;
 
-    public startTime?: number;
-    public lastTickMillis?: number;
+    private startTime?: number;
+    private lastTickMillis?: number;
 
     constructor(
         p5: p5Types,
@@ -70,6 +70,5 @@ export default class CameraMovement {
         cam.move(0, 0, movement);
 
         this.lastTickMillis = curTime;
-        return;
     }
 }

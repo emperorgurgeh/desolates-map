@@ -38,7 +38,7 @@ export default class Planet extends CelestialObject {
         p5: p5Types,
         cam: Camera,
         planetSelectedTexture: Image,
-        jetbrainsMonoFont: Font,
+        labelFont: Font,
         lowres: boolean,
         stage: Stages
     ) {
@@ -55,18 +55,11 @@ export default class Planet extends CelestialObject {
         const detail = this._getLevelOfDetail(p5, cam, lowres);
         p5.translate(this.x, this.y, this.z);
 
-        // if (stage == Stages.CLUSTER_TRANSITION) {
-        //     p5.tint(
-        //         p5.random([0, 255]),
-        //         p5.random([0, 255]),
-        //         p5.random([0, 255])
-        //     );
-        // }
         p5.texture(this.textureImg);
         p5.sphere(this.radius, detail, detail);
 
         // Draw labels
-        this._drawLabel(p5, cam, distWithCam, jetbrainsMonoFont, stage);
+        this._drawLabel(p5, cam, distWithCam, labelFont, stage);
 
         if (this.selected) {
             this._drawSelectionRing(p5, cam, planetSelectedTexture);
@@ -83,7 +76,7 @@ export default class Planet extends CelestialObject {
         p5: p5Types,
         cam: Camera,
         distWithCam: number,
-        jetbrainsMonoFont: Font,
+        labelFont: Font,
         stage: Stages
     ) {
         if (stage != Stages.SPACE_NAVIGATION) return;
@@ -101,7 +94,7 @@ export default class Planet extends CelestialObject {
 
         p5.fill(255, opacity);
 
-        p5.textFont(jetbrainsMonoFont!);
+        p5.textFont(labelFont!);
         p5.textAlign(p5.LEFT, p5.CENTER);
 
         let deltaX = (cam as any).eyeX - (this.x + 20);
