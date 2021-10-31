@@ -64,33 +64,3 @@ export function drawClusterSelectionStage(
 
 //   select("#nav-container").addClass("hidden");
 // }
-
-// export function _searchForPlanetAndChangeStage() {
-//   const query = select("#search-input").value();
-//   planetSearch(
-//     query,
-//     function (p) {
-//       print(`Found ${p.name}`);
-
-//       // Set planet as selected
-//       for (let po of celestialObjects) {
-//         po.setSelected(false);
-//       }
-//       p.setSelected(true);
-
-//       // Select cluster
-//       Cluster.changeCurrentCluster(Config, p.cluster);
-
-//       // Initiate a camera movement towards the planet
-//       ongoingCamMov = new CameraMovement(cam, p.getPosVector(), 3000, 125);
-//       ongoingCamMov.start();
-
-//       changeStage(Stage.SPACE_NAVIGATION);
-
-//       return false; // Stops search
-//     },
-//     function () {
-//       alert("Planet not found :sad_astronaut:");
-//     }
-//   );
-// }

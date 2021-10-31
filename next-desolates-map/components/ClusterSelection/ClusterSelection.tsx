@@ -118,6 +118,7 @@ function ClusterButton({ cluster }: IClusterButton) {
         p5,
         cam,
         setCluster,
+        changeCurrentCluster,
     } = useContext(SpaceRendererContext);
 
     function handleClick(e: any) {
@@ -126,6 +127,8 @@ function ClusterButton({ cluster }: IClusterButton) {
         //     Config,
         //     e.target.getAttribute("data-cluster")
         // );
+
+        changeCurrentCluster(cluster);
 
         let tempCamMov = new CameraMovement(
             p5!,
@@ -141,7 +144,6 @@ function ClusterButton({ cluster }: IClusterButton) {
 
         // TEMP
         changeStage(Stages.SPACE_NAVIGATION);
-        setCluster(cluster);
     }
 
     return (

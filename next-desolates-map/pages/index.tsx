@@ -19,7 +19,7 @@ const Home: NextPage = (spaceRenderer) => {
                 DESOLATEs
             </h1>
             <SwitchTransition>
-                <CSSTransition key={stage} classNames="fade" timeout={200}>
+                <CSSTransition key={stage} classNames="fade" timeout={300}>
                     <>
                         {stage == Stages.LOADING && (
                             <div className="z-10 flex items-center justify-center w-full h-full bg-black">
@@ -29,11 +29,7 @@ const Home: NextPage = (spaceRenderer) => {
                         {stage == Stages.CLUSTER_SELECTION && (
                             <ClusterSelection />
                         )}
-                        {stage == Stages.CLUSTER_TRANSITION && (
-                            <div className="z-10 flex items-center bg-red-400 justify-centerw-1/2 h-1/2">
-                                <p>CLUSTER TRANSITION</p>
-                            </div>
-                        )}
+                        {stage == Stages.CLUSTER_TRANSITION && null}
                         {stage == Stages.SPACE_NAVIGATION && (
                             <SpaceNavigation />
                         )}

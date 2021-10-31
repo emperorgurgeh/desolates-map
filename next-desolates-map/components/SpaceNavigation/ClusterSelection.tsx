@@ -4,13 +4,14 @@ import { Clusters, SpaceRendererContext } from "../../pages/_app";
 
 /* eslint-disable @next/next/no-img-element */
 export default function ClusterSelection() {
-    const { cluster, setCluster } = useContext(SpaceRendererContext);
+    const { cluster, setCluster, changeCurrentCluster } =
+        useContext(SpaceRendererContext);
 
     const [loadedImage, setLoadedImage] = useState(false);
 
     function handleOptionChange(e: any) {
         console.log(e.target.value);
-        setCluster(e.target.value);
+        changeCurrentCluster(e.target.value, true);
     }
 
     function handleLoadedImage() {
@@ -56,10 +57,6 @@ export default function ClusterSelection() {
 
 function ClusterSelectionOption({ clusterName }: any) {
     const { cluster } = useContext(SpaceRendererContext);
-
-    useEffect(() => {
-        console.log(clusterName === cluster);
-    }, [cluster]);
 
     return (
         <option

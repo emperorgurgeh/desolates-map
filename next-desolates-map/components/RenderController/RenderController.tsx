@@ -14,6 +14,7 @@ import Sun from "../../core/modules/Sun";
 import Planet from "../../core/modules/Planet";
 
 import { addScreenPositionFunction } from "../../js/lib/3dposition";
+import { drawClusterTransitionStage } from "../../core/stages/ClusterTransitionStage";
 
 const Sketch = dynamic(import("react-p5"), {
     ssr: false,
@@ -54,6 +55,14 @@ export default function RenderController() {
         lowres,
         selectedPlanet,
         setSelectedPlanet,
+        fromCluster,
+        setFromCluster,
+        frozenCamCenter,
+        setFrozenCamCenter,
+        warpspeed,
+        setWarpspeed,
+        lastDist,
+        setLastDist,
     } = useContext(SpaceRendererContext);
 
     function loadPlanets(sources: Array<string>) {
@@ -84,7 +93,7 @@ export default function RenderController() {
             const textureImg = planetTextures[p.attributes.palette];
 
             const planet = new Planet(
-                planetRadius + Math.random(),
+                planetRadius,
                 textureImg,
                 p.attributes.coords,
                 p.name.split("DESOLATEs ")[1],
@@ -198,7 +207,25 @@ export default function RenderController() {
                 drawClusterSelectionStage(p5, skyboxImg!, skyboxRadius);
                 break;
             case Stages.CLUSTER_TRANSITION:
-                // _drawClusterTransitionStage();
+                drawClusterTransitionStage(
+                    p5!,
+                    cam!,
+                    celestialObjects,
+                    setCelestialObjects,
+                    fromCluster!,
+                    changeStage,
+                    frozenCamCenter,
+                    warpspeed!,
+                    setWarpspeed,
+                    lastDist!,
+                    setLastDist,
+                    planetSelectedTexture!,
+                    jetbrainsMonoFont!,
+                    lowres,
+                    stage,
+                    skyboxImg!,
+                    skyboxRadius
+                );
                 break;
             case Stages.SPACE_NAVIGATION:
                 drawSpaceNavigationStage(

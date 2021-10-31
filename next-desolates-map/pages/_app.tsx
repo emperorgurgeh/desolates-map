@@ -6,6 +6,10 @@ import { createContext, useState } from "react";
 import p5Types, { Camera, Font, Image } from "p5";
 import p5 from "p5";
 import Planet from "../core/modules/Planet";
+import {
+    _loadClusterTransitionStage,
+    _unloadClusterTransitionStage,
+} from "../core/stages/ClusterTransitionStage";
 
 export const SpaceRendererContext = createContext<ISpaceRenderer>(
     {} as ISpaceRenderer
@@ -30,6 +34,7 @@ interface ISpaceRenderer {
     changeStage: Function;
     cluster: Clusters;
     setCluster: Function;
+    changeCurrentCluster: Function;
 
     celestialObjects: Array<any>;
     setCelestialObjects: Function;
@@ -63,6 +68,15 @@ interface ISpaceRenderer {
 
     selectedPlanet?: Planet;
     setSelectedPlanet: Function;
+
+    fromCluster?: Clusters;
+    setFromCluster: Function;
+    frozenCamCenter: any;
+    setFrozenCamCenter: Function;
+    warpspeed?: number;
+    setWarpspeed: Function;
+    lastDist?: number;
+    setLastDist: Function;
 }
 
 export const enum Stages {
@@ -131,6 +145,27 @@ function MyApp({ Component, pageProps }: AppProps) {
         undefined
     );
 
+    const [fromCluster, setFromCluster] = useState<Clusters | undefined>(
+        undefined
+    );
+    const [frozenCamCenter, setFrozenCamCenter] = useState<any>(undefined);
+    const [warpspeed, setWarpspeed] = useState<number | undefined>(undefined);
+    const [lastDist, setLastDist] = useState<number | undefined>(undefined);
+
+    function changeCurrentCluster(
+        newCluster: Clusters,
+        transitionViaWarpspeed = false
+    ) {
+        if (transitionViaWarpspeed) {
+            console.log("AJAJA");
+            changeStage(Stages.CLUSTER_TRANSITION);
+        }
+
+        // TODO deselect any selected planet
+        console.info(`Changing cluster to ${newCluster}`);
+        setCluster(newCluster);
+    }
+
     function changeStage(newStage: Stages) {
         console.info(`Transitioning stage from: ${stage} to ${newStage}`);
 
@@ -139,7 +174,53 @@ function MyApp({ Component, pageProps }: AppProps) {
             // console.trace();
         }
 
+        _unloadStage(stage);
+        _loadStage(newStage);
         setStage(newStage);
+    }
+
+    function _loadStage(newStage: Stages) {
+        switch (newStage) {
+            case Stages.LOADING:
+                break;
+            case Stages.CLUSTER_SELECTION:
+                // _loadClusterSelectionStage();
+                break;
+            case Stages.CLUSTER_TRANSITION:
+                _loadClusterTransitionStage(
+                    p5!,
+                    cam!,
+                    setFrozenCamCenter,
+                    cluster,
+                    setWarpspeed,
+                    setFromCluster,
+                    setLastDist
+                );
+                break;
+            case Stages.SPACE_NAVIGATION:
+                // _loadSpaceNavigationStage();
+                break;
+        }
+    }
+
+    function _unloadStage(oldStage: Stages) {
+        switch (oldStage) {
+            case Stages.LOADING:
+                break;
+            case Stages.CLUSTER_SELECTION:
+                // _unloadClusterSelectionStage();
+                break;
+            case Stages.CLUSTER_TRANSITION:
+                _unloadClusterTransitionStage(
+                    setFrozenCamCenter,
+                    setFrozenCamCenter,
+                    setLastDist
+                );
+                break;
+            case Stages.SPACE_NAVIGATION:
+                // _unloadSpaceNavigationStage();
+                break;
+        }
     }
 
     return (
@@ -153,6 +234,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                 changeStage,
                 cluster,
                 setCluster,
+                changeCurrentCluster,
                 celestialObjects,
                 setCelestialObjects,
                 jetbrainsMonoFont,
@@ -181,6 +263,14 @@ function MyApp({ Component, pageProps }: AppProps) {
                 setOngoingCamMov,
                 selectedPlanet,
                 setSelectedPlanet,
+                fromCluster,
+                setFromCluster,
+                frozenCamCenter,
+                setFrozenCamCenter,
+                warpspeed,
+                setWarpspeed,
+                lastDist,
+                setLastDist,
             }}
         >
             <div className="relative flex items-center justify-center w-full h-screen max-h-screen min-h-screen">

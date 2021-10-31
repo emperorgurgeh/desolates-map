@@ -54,15 +54,18 @@ export default class Planet extends CelestialObject {
         const detail = this._getLevelOfDetail(p5, cam, lowres);
         p5.translate(this.x, this.y, this.z);
 
-        // ADD CONFIG
         if (stage == Stages.CLUSTER_TRANSITION) {
-            // tint(random([0, 255]), random([0, 255]), random([0, 255]));
+            p5.tint(
+                p5.random([0, 255]),
+                p5.random([0, 255]),
+                p5.random([0, 255])
+            );
         }
         p5.texture(this.textureImg);
         p5.sphere(this.radius, detail, detail);
 
         // Draw labels
-        this._drawLabel(p5, cam, distWithCam, jetbrainsMonoFont);
+        this._drawLabel(p5, cam, distWithCam, jetbrainsMonoFont, stage);
 
         if (this.selected) {
             this._drawSelectionRing(p5, cam, planetSelectedTexture);
@@ -79,10 +82,10 @@ export default class Planet extends CelestialObject {
         p5: p5Types,
         cam: Camera,
         distWithCam: number,
-        jetbrainsMonoFont: Font
+        jetbrainsMonoFont: Font,
+        stage: Stages
     ) {
-        // ADD CONFIG
-        // if (Config.stage != Stage.SPACE_NAVIGATION) return;
+        if (stage != Stages.SPACE_NAVIGATION) return;
 
         if (distWithCam > 1500 || distWithCam < 50) {
             return;

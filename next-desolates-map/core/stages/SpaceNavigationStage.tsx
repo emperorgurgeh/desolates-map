@@ -24,7 +24,7 @@ export function drawSpaceNavigationStage(
     stage: Stages
 ) {
     p5.blendMode(p5.BLEND);
-    // p5.background(0, 0, 0);
+    p5.background(0, 0, 0);
     p5.cursor(p5.CROSS);
 
     p5.lights();
@@ -46,7 +46,14 @@ export function drawSpaceNavigationStage(
     celestialObjects
         .filter((o) => o.isInCluster(cluster))
         .forEach((o) =>
-            o.draw(p5, cam, planetSelectedTexture, jetbrainsMonoFont, stage)
+            o.draw(
+                p5,
+                cam,
+                planetSelectedTexture,
+                jetbrainsMonoFont,
+                lowres,
+                stage
+            )
         );
 
     // Move camera
