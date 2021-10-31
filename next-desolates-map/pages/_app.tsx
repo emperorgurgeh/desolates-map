@@ -157,7 +157,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         transitionViaWarpspeed = false
     ) {
         if (transitionViaWarpspeed) {
-            console.log("AJAJA");
             changeStage(Stages.CLUSTER_TRANSITION);
         }
 

@@ -2,11 +2,14 @@
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
-import CameraMovement from "../../../core/modules/CameraMovement";
-import { SpaceRendererContext } from "../../../pages/_app";
-import Loader from "../../Loader/Loader";
+import CameraMovement from "../../core/modules/CameraMovement";
+import { SpaceRendererContext } from "../../pages/_app";
+import Loader from "../Loader/Loader";
 
-export default function PlanetInfo() {
+export default function PlanetInfo({
+    showInhabitants,
+    setShowInhabitants,
+}: any) {
     const { p5, cam, selectedPlanet, setSelectedPlanet, setOngoingCamMov } =
         useContext(SpaceRendererContext);
 
@@ -24,6 +27,7 @@ export default function PlanetInfo() {
             const data = await res.json();
             if (!data.error) {
                 setOwnerAddress(data.ownerAddress);
+                selectedPlanet?.setOwnerAddress(data.ownerAddress);
             } else {
                 setOwnerAddress(null);
             }
@@ -51,12 +55,22 @@ export default function PlanetInfo() {
 
     useEffect(() => {
         if (selectedPlanet) {
+            if (showInhabitants) {
+                setShowInhabitants(false);
+            }
+
             setLoadingPlanetImage(true);
             setOwnerAddress(null);
             setLoadingOwner(true);
-            fetchPlanetOwner();
+            if (!selectedPlanet?.ownerAddress) {
+                fetchPlanetOwner();
+            }
         }
     }, [selectedPlanet]);
+
+    function handleToggleInhabitants() {
+        setShowInhabitants(!showInhabitants);
+    }
 
     return (
         <SwitchTransition>
@@ -67,7 +81,7 @@ export default function PlanetInfo() {
             >
                 <>
                     {selectedPlanet ? (
-                        <div className="z-10 px-3 pt-2 pb-3 text-left transition-opacity duration-1000 ease-out rounded-lg opacity-100 text-primary font-cool w-80 backdrop-filter backdrop-blur outline-cool shadow-cool bg-faded">
+                        <div className="z-10 px-3 pt-2 pb-3 mb-6 text-left transition-opacity duration-1000 ease-out rounded-lg opacity-100 text-primary font-cool w-80 backdrop-filter backdrop-blur outline-cool shadow-cool bg-faded">
                             <div className="relative w-full">
                                 <p className="mb-2 text-lg">Planet info</p>
                                 <button
@@ -108,14 +122,23 @@ export default function PlanetInfo() {
                                         target="_blank"
                                         className="underline select-text"
                                     >
-                                        {loadingOwner
-                                            ? "LOADING"
-                                            : ownerAddress
-                                            ? `${ownerAddress.substring(
-                                                  0,
-                                                  20
-                                              )}...`
-                                            : "Unclaimed"}
+                                        {selectedPlanet?.ownerAddress ? (
+                                            `${selectedPlanet?.ownerAddress.substring(
+                                                0,
+                                                20
+                                            )}...`
+                                        ) : (
+                                            <>
+                                                {loadingOwner
+                                                    ? "LOADING"
+                                                    : ownerAddress
+                                                    ? `${ownerAddress.substring(
+                                                          0,
+                                                          20
+                                                      )}...`
+                                                    : "Unclaimed"}
+                                            </>
+                                        )}
                                     </a>
                                 </Link>
                             </p>
@@ -129,6 +152,7 @@ export default function PlanetInfo() {
                                     </a>
                                 </Link>
                                 <button
+                                    onClick={handleToggleInhabitants}
                                     className="p-2 text-sm text-center transition-colors duration-200 rounded-lg w-36 hover:text-white hover:bg-primary outline-cool backdrop-filter backdrop-blur bg-faded"
                                     data-addr="Gi9azGeXawvDCaR5p6vHY98hMsU1BZSVZNzAdZSMP6UQ"
                                 >

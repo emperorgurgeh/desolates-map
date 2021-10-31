@@ -13,6 +13,7 @@ export default class Planet extends CelestialObject {
     public link: any;
     public selected: boolean;
     public cluster: string;
+    public ownerAddress?: string;
 
     constructor(
         radius: number,
@@ -54,13 +55,13 @@ export default class Planet extends CelestialObject {
         const detail = this._getLevelOfDetail(p5, cam, lowres);
         p5.translate(this.x, this.y, this.z);
 
-        if (stage == Stages.CLUSTER_TRANSITION) {
-            p5.tint(
-                p5.random([0, 255]),
-                p5.random([0, 255]),
-                p5.random([0, 255])
-            );
-        }
+        // if (stage == Stages.CLUSTER_TRANSITION) {
+        //     p5.tint(
+        //         p5.random([0, 255]),
+        //         p5.random([0, 255]),
+        //         p5.random([0, 255])
+        //     );
+        // }
         p5.texture(this.textureImg);
         p5.sphere(this.radius, detail, detail);
 
@@ -254,5 +255,9 @@ export default class Planet extends CelestialObject {
                 return 4;
             }
         }
+    }
+
+    setOwnerAddress(ownerAddress: string) {
+        this.ownerAddress = ownerAddress;
     }
 }

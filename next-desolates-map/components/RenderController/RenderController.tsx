@@ -197,7 +197,7 @@ export default function RenderController() {
 
     function draw(p5: p5Types) {
         // console.log(celestialObjects);
-        p5.background(0, 0, 0);
+
         switch (stage) {
             case Stages.LOADING:
                 // TODO implement loading screen
