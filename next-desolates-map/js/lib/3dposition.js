@@ -4,7 +4,7 @@
 // See: https://editor.p5js.org/bohnacker/sketches/nUk3bVW7b on how to use it
 
 
-function addScreenPositionFunction(p5Instance) {
+export function addScreenPositionFunction(p5Instance) {
 	let p = p5Instance || this;
 
 	// find out which context we're in (2D or WEBGL)
@@ -21,7 +21,7 @@ function addScreenPositionFunction(p5Instance) {
 
 	if (p.draw instanceof Function) {
 		let drawNative = p.draw;
-		p.draw = function(...args) {
+		p.draw = function (...args) {
 			if (context == R_2D) p._renderer.matrixStack = [new p5.Matrix()];
 			drawNative.apply(p, args);
 		};
@@ -30,7 +30,7 @@ function addScreenPositionFunction(p5Instance) {
 
 	if (p.resetMatrix instanceof Function) {
 		let resetMatrixNative = p.resetMatrix;
-		p.resetMatrix = function(...args) {
+		p.resetMatrix = function (...args) {
 			if (context == R_2D) p._renderer.matrixStack = [new p5.Matrix()];
 			resetMatrixNative.apply(p, args);
 		};
@@ -38,7 +38,7 @@ function addScreenPositionFunction(p5Instance) {
 
 	if (p.translate instanceof Function) {
 		let translateNative = p.translate;
-		p.translate = function(...args) {
+		p.translate = function (...args) {
 			if (context == R_2D) last(p._renderer.matrixStack).translate(args);
 			translateNative.apply(p, args);
 		};
@@ -46,7 +46,7 @@ function addScreenPositionFunction(p5Instance) {
 
 	if (p.rotate instanceof Function) {
 		let rotateNative = p.rotate;
-		p.rotate = function(...args) {
+		p.rotate = function (...args) {
 			if (context == R_2D) {
 				let rad = p._toRadians(args[0]);
 				last(p._renderer.matrixStack).rotateZ(rad);
@@ -57,7 +57,7 @@ function addScreenPositionFunction(p5Instance) {
 
 	if (p.rotateX instanceof Function) {
 		let rotateXNative = p.rotateX;
-		p.rotateX = function(...args) {
+		p.rotateX = function (...args) {
 			if (context == R_2D) {
 				let rad = p._toRadians(args[0]);
 				last(p._renderer.matrixStack).rotateX(rad);
@@ -67,7 +67,7 @@ function addScreenPositionFunction(p5Instance) {
 	}
 	if (p.rotateY instanceof Function) {
 		let rotateYNative = p.rotateY;
-		p.rotateY = function(...args) {
+		p.rotateY = function (...args) {
 			if (context == R_2D) {
 				let rad = p._toRadians(args[0]);
 				last(p._renderer.matrixStack).rotateY(rad);
@@ -77,7 +77,7 @@ function addScreenPositionFunction(p5Instance) {
 	}
 	if (p.rotateZ instanceof Function) {
 		let rotateZNative = p.rotateZ;
-		p.rotateZ = function(...args) {
+		p.rotateZ = function (...args) {
 			if (context == R_2D) {
 				let rad = p._toRadians(args[0]);
 				last(p._renderer.matrixStack).rotateZ(rad);
@@ -88,7 +88,7 @@ function addScreenPositionFunction(p5Instance) {
 
 	if (p.scale instanceof Function) {
 		let scaleNative = p.scale;
-		p.scale = function(...args) {
+		p.scale = function (...args) {
 			if (context == R_2D) {
 				let m = last(p._renderer.matrixStack);
 				let sx = args[0];
@@ -106,7 +106,7 @@ function addScreenPositionFunction(p5Instance) {
 
 	if (p.shearX instanceof Function) {
 		let shearXNative = p.shearX;
-		p.shearX = function(...args) {
+		p.shearX = function (...args) {
 			if (context == R_2D) {
 				let rad = p._toRadians(args[0]);
 				let stack = p._renderer.matrixStack;
@@ -122,7 +122,7 @@ function addScreenPositionFunction(p5Instance) {
 
 	if (p.shearY instanceof Function) {
 		let shearYNative = p.shearY;
-		p.shearY = function(...args) {
+		p.shearY = function (...args) {
 			if (context == R_2D) {
 				let rad = p._toRadians(args[0]);
 				let stack = p._renderer.matrixStack;
@@ -139,7 +139,7 @@ function addScreenPositionFunction(p5Instance) {
 
 	if (p.applyMatrix instanceof Function) {
 		let applyMatrixNative = p.applyMatrix;
-		p.applyMatrix = function(...args) {
+		p.applyMatrix = function (...args) {
 			if (context == R_2D) {
 				let stack = p._renderer.matrixStack;
 				let m = last(stack);
@@ -160,7 +160,7 @@ function addScreenPositionFunction(p5Instance) {
 
 	if (p.push instanceof Function) {
 		let pushNative = p.push;
-		p.push = function(...args) {
+		p.push = function (...args) {
 			if (context == R_2D) {
 				let m = last(p._renderer.matrixStack);
 				p._renderer.matrixStack.push(m.copy());
@@ -170,7 +170,7 @@ function addScreenPositionFunction(p5Instance) {
 	}
 	if (p.pop instanceof Function) {
 		let popNative = p.pop;
-		p.pop = function(...args) {
+		p.pop = function (...args) {
 			if (context == R_2D) p._renderer.matrixStack.pop();
 			popNative.apply(p, args);
 		};
@@ -178,7 +178,7 @@ function addScreenPositionFunction(p5Instance) {
 
 
 
-	p.screenPosition = function(x, y, z) {
+	p.screenPosition = function (x, y, z) {
 		if (x instanceof p5.Vector) {
 			let v = x;
 			x = v.x;
