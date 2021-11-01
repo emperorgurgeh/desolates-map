@@ -8,8 +8,18 @@ import PlanetSearch from "./PlanetSearch";
 export default function SpaceNavigation() {
     const [showInhabitants, setShowInhabitants] = useState(false);
 
+    // Stop propagation of scrolling so that the map zoom doesn't change
+    // when the user scrolls on the navigation bar.
+    function handleScroll(e: any) {
+        e.stopPropagation();
+        e.nativeEvent.stopImmediatePropagation();
+    }
+
     return (
-        <div className="absolute top-0 right-0 flex flex-col max-h-screen p-4 overflow-y-auto select-none no-scrollbar">
+        <div
+            className="absolute top-0 right-0 flex flex-col max-h-screen p-4 overflow-y-auto select-none no-scrollbar"
+            onWheel={handleScroll}
+        >
             <ClusterSelection />
             <PlanetSearch />
             <PlanetInfo

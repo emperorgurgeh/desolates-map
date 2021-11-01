@@ -12,7 +12,7 @@ export default class Planet extends CelestialObject {
     public image: string;
     public link: any;
     public selected: boolean;
-    public cluster: string;
+    public cluster: Clusters;
     public ownerAddress?: string;
 
     constructor(
@@ -51,6 +51,14 @@ export default class Planet extends CelestialObject {
             this.z
         );
 
+        const isMouseOver = this.isMouseOver(
+            p5,
+            cam,
+            p5.mouseX,
+            p5.mouseY,
+            this.cluster
+        );
+
         p5.push();
         const detail = this._getLevelOfDetail(p5, cam, lowres);
         p5.translate(this.x, this.y, this.z);
@@ -58,11 +66,15 @@ export default class Planet extends CelestialObject {
         p5.texture(this.textureImg);
         p5.sphere(this.radius, detail, detail);
 
-        // Draw labels
-        this._drawLabel(p5, cam, distWithCam, labelFont, stage);
+        // Draw labels & selection ring
+        if (stage == Stages.SPACE_NAVIGATION) {
+            if (isMouseOver || this.selected) {
+                this._drawLabel(p5, cam, distWithCam, labelFont);
+            }
 
-        if (this.selected) {
-            this._drawSelectionRing(p5, cam, planetSelectedTexture);
+            if (this.selected) {
+                this._drawSelectionRing(p5, cam, planetSelectedTexture);
+            }
         }
 
         p5.pop();
@@ -72,15 +84,7 @@ export default class Planet extends CelestialObject {
         return this.cluster === cluster;
     }
 
-    _drawLabel(
-        p5: p5Types,
-        cam: Camera,
-        distWithCam: number,
-        labelFont: Font,
-        stage: Stages
-    ) {
-        if (stage != Stages.SPACE_NAVIGATION) return;
-
+    _drawLabel(p5: p5Types, cam: Camera, distWithCam: number, labelFont: Font) {
         if (distWithCam > 1500 || distWithCam < 50) {
             return;
         }
