@@ -140,9 +140,10 @@ export default function RenderController() {
                 );
                 if (planet && planet instanceof Planet) {
                     planet.setSelected(true);
+                    setSelectedPlanet(planet);
 
                     // Select cluster
-                    changeCurrentCluster(planet.cluster);
+                    changeCurrentCluster(planet.cluster, false, true);
 
                     // Initiate a camera movement towards the planet
                     const tempOngoingCamMov = new CameraMovement(
@@ -361,6 +362,7 @@ export function searchForPlanetAndChangeCluster(
     p5: p5Types,
     cam: Camera,
     setOngoingCamMov: Function,
+    setSelectedPlanet: Function,
     celestialObjects: Array<any>,
     currentCluster: Clusters,
     changeCluster: Function
@@ -375,21 +377,22 @@ export function searchForPlanetAndChangeCluster(
                 po.setSelected(false);
             }
             p.setSelected(true);
+            setSelectedPlanet(p);
 
-            if (p.cluster === currentCluster) {
-                // Just move to planet
-                const tempOngoingCamMov = new CameraMovement(
-                    p5!,
-                    cam!,
-                    p.getPosVector(p5!),
-                    1500
-                );
-                tempOngoingCamMov.start(p5!);
-                setOngoingCamMov(tempOngoingCamMov);
-            } else {
-                // Change cluster
-                changeCluster(p.cluster, true);
+            // Change cluster if necessary
+            if (p.cluster != currentCluster) {
+                changeCluster(p.cluster, true, true);
             }
+
+            // Start cam movement to planet
+            const tempOngoingCamMov = new CameraMovement(
+                p5!,
+                cam!,
+                p.getPosVector(p5!),
+                1500
+            );
+            tempOngoingCamMov.start(p5!);
+            setOngoingCamMov(tempOngoingCamMov);
 
             return false;
         },

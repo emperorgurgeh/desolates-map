@@ -154,15 +154,25 @@ function MyApp({ Component, pageProps }: AppProps) {
 
     function changeCurrentCluster(
         newCluster: Clusters,
-        transitionViaWarpspeed = false
+        transitionViaWarpspeed = false,
+        withPlanetSelected = false
     ) {
         if (transitionViaWarpspeed) {
             changeStage(Stages.CLUSTER_TRANSITION);
         }
 
-        // TODO deselect any selected planet
         console.info(`Changing cluster to ${newCluster}`);
         setCluster(newCluster);
+
+        // Deselect any selected planet from other cluster
+        if (
+            !withPlanetSelected &&
+            selectedPlanet &&
+            !selectedPlanet.isInCluster(newCluster)
+        ) {
+            selectedPlanet.setSelected(false);
+            setSelectedPlanet(undefined);
+        }
     }
 
     function changeStage(newStage: Stages) {
