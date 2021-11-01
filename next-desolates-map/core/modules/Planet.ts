@@ -23,7 +23,10 @@ export default class Planet extends CelestialObject {
         image: string,
         link: any
     ) {
-        super(Cluster.getTransformedPos(pos));
+        super(
+            Cluster.getTransformedPos(pos),
+            parseInt(name.split("#")[1].trim())
+        );
         this.origCoords = pos;
         this.radius = radius;
         this.textureImg = textureImg;
@@ -140,6 +143,10 @@ export default class Planet extends CelestialObject {
 
     setSelected(value: boolean) {
         this.selected = value;
+        if (value) {
+            // TODO: Should we append the param instead of replacing the entire query?
+            window.history.replaceState(null, "", `?planet=${this.id}`);
+        }
     }
 
     isSelected = () => this.selected;

@@ -1,7 +1,7 @@
 // import Sketch from "react-p5";
 import p5Types, { Camera } from "p5";
 import dynamic from "next/dynamic";
-import { useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect, useRef } from "react";
 
 import { Clusters, SpaceRendererContext, Stages } from "../../pages/_app";
 
@@ -16,6 +16,7 @@ import Planet from "../../core/modules/Planet";
 import { addScreenPositionFunction } from "../../js/lib/3dposition";
 import { drawClusterTransitionStage } from "../../core/stages/ClusterTransitionStage";
 import { Cluster } from "../../core/modules/Cluster";
+import CelestialObject from "../../core/modules/CelestialObject";
 
 const Sketch = dynamic(import("react-p5"), {
     ssr: false,
@@ -67,6 +68,8 @@ export default function RenderController() {
         changeCurrentCluster,
     } = useContext(SpaceRendererContext);
 
+    const camRef = useRef<Camera>();
+
     function loadPlanets(sources: Array<string>) {
         let planets: Array<any> = [];
         _loadPlanetsRec(sources, 0, planets);
@@ -109,9 +112,13 @@ export default function RenderController() {
         const sun = loadSun();
         celestialRet.push(sun);
 
-        setCelestialObjects(celestialObjects.concat([...celestialRet]));
+        const loadedCelestialObjects = celestialObjects.concat([
+            ...celestialRet,
+        ]);
 
-        parseURLParamsAndInit();
+        setCelestialObjects(loadedCelestialObjects);
+
+        parseURLParamsAndInit(loadedCelestialObjects);
     }
 
     function loadSun() {
@@ -119,10 +126,44 @@ export default function RenderController() {
         return sun;
     }
 
-    function parseURLParamsAndInit() {
+    function parseURLParamsAndInit(
+        celestialObjectArray: Array<CelestialObject>
+    ) {
         if (p5) {
             const urlParams = p5.getURLParams() as any;
 
+            // ?planet=<planetId> loads a specific planet
+            const planetParam = parseInt(urlParams.planet);
+            if (planetParam) {
+                const planet = celestialObjectArray.find(
+                    (o) => o.id === planetParam
+                );
+                if (planet && planet instanceof Planet) {
+                    planet.setSelected(true);
+
+                    // Select cluster
+                    changeCurrentCluster(planet.cluster);
+
+                    // Initiate a camera movement towards the planet
+                    const tempOngoingCamMov = new CameraMovement(
+                        p5,
+                        camRef.current!,
+                        planet.getPosVector(p5),
+                        3000,
+                        125
+                    );
+                    tempOngoingCamMov.start(p5);
+
+                    setOngoingCamMov(tempOngoingCamMov);
+
+                    changeStage(Stages.SPACE_NAVIGATION);
+                    return;
+                } else {
+                    console.error(`Planet with id ${planetParam} not found`);
+                }
+            }
+
+            // ?cluster=<clusterName> loads a specific cluster
             const clusterParam = urlParams.cluster
                 ? urlParams.cluster.toLowerCase()
                 : undefined;
@@ -167,14 +208,13 @@ export default function RenderController() {
     }
 
     function setup(p5: p5Types, canvasParentRef: Element) {
-        // config.changeStage(stage.LOADING);
-
         p5.createCanvas(p5.windowWidth, p5.windowHeight, p5.WEBGL).parent(
             canvasParentRef
         );
 
         let tempCamp = p5.createCamera();
         setCam(tempCamp);
+        camRef.current = tempCamp;
 
         tempCamp.setPosition(0, 0, 2500);
         tempCamp.lookAt(0, 0, 0);
@@ -291,7 +331,7 @@ export default function RenderController() {
             }
             o.setSelected(true);
 
-            let tempOngoingCamMov = new CameraMovement(
+            const tempOngoingCamMov = new CameraMovement(
                 p5,
                 cam!,
                 o.getPosVector(p5),
@@ -338,7 +378,7 @@ export function searchForPlanetAndChangeCluster(
 
             if (p.cluster === currentCluster) {
                 // Just move to planet
-                let tempOngoingCamMov = new CameraMovement(
+                const tempOngoingCamMov = new CameraMovement(
                     p5!,
                     cam!,
                     p.getPosVector(p5!),
@@ -387,7 +427,7 @@ export function searchForPlanetAndChangeStage(
             setCluster(p.cluster);
 
             // Initiate a camera movement towards the planet
-            let tempOngoingCamMov = new CameraMovement(
+            const tempOngoingCamMov = new CameraMovement(
                 p5,
                 cam,
                 p.getPosVector(p5),

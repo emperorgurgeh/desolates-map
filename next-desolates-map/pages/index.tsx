@@ -38,7 +38,6 @@ const Home: NextPage = (spaceRenderer) => {
             </SwitchTransition>
         </>
     );
-    return null;
 };
 
 export default Home;
