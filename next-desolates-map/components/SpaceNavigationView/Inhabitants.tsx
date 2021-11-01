@@ -19,7 +19,7 @@ export default function Inhabitants() {
     async function fetchNFTs() {
         setLoading(true);
         const res = await fetch(
-            `/api/allNFTsForOwner/${selectedPlanet?.ownerAddress}?perPage=${PER_PAGE}&page=${page}&includeTotal=1`
+            `/api/allNFTsForOwner/${selectedPlanet?.ownerAddress}?perPage=${PER_PAGE}&page=${page}&includeTotal=1&filterOutDesolates=1`
         );
 
         if (mounted) {

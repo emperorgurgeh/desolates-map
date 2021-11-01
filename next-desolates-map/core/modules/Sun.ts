@@ -2,7 +2,6 @@ import { Camera, Image } from "p5";
 import CelestialObject from "./CelestialObject";
 
 // TODO support suns outside of (0,0,0)
-// TODO support suns outside of (0,0,0)
 export default class Sun extends CelestialObject {
     public radius: number;
     public textureImg: Image;
@@ -11,7 +10,7 @@ export default class Sun extends CelestialObject {
         textureImg: Image,
         pos: [number, number, number]
     ) {
-        super(pos);
+        super(pos, -1);
         this.radius = radius;
         this.textureImg = textureImg;
     }

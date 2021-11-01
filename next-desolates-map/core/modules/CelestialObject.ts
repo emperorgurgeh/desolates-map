@@ -5,11 +5,13 @@ export default class CelestialObject {
     public x: number;
     public y: number;
     public z: number;
+    public id: number;
 
-    constructor(pos: [number, number, number]) {
+    constructor(pos: [number, number, number], id: number) {
         this.x = pos[0];
         this.y = pos[1];
         this.z = pos[2];
+        this.id = id;
     }
 
     getDistWithCam(p5: p5Types, cam: Camera) {

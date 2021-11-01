@@ -13,7 +13,7 @@ const Home: NextPage = (spaceRenderer) => {
     return (
         <>
             <h1
-                className="absolute z-10 text-3xl text-white select-none top-6"
+                className="absolute z-10 text-3xl tracking-tighter text-white select-none top-6 backdrop-blur backdrop-filter"
                 style={{ fontFamily: "Zen Dots" }}
             >
                 DESOLATEs
@@ -38,7 +38,6 @@ const Home: NextPage = (spaceRenderer) => {
             </SwitchTransition>
         </>
     );
-    return null;
 };
 
 export default Home;

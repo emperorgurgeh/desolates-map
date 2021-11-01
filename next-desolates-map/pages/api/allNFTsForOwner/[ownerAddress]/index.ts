@@ -2,13 +2,19 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { Connection, Metadata, MetadataDataData } from "@metaplex/js";
 import { PublicKey } from "@solana/web3.js";
-import { solanaTokenProgram } from "../../../../utils/consts";
+import {
+    solanaTokenProgram,
+    tokenIdToMintHashMap,
+} from "../../../../utils/consts";
 import { createErrorMessage } from "../../../../utils";
 
 const DEFAULT_PER_PAGE = 10;
 const DEFAULT_PAGE = 1;
+const DEFAULT_FILTER_OUT_DESOLATES = false;
 
-// This endpoint implements pagination by passing a 'page' number, an optional 'perPage', and an optional 'includeTotal` parameter
+// This endpoint implements pagination by passing a 'page' number,
+// an optional 'perPage', an optional 'includeTotal` parameter and
+// and optional 'filterOutDesolates' parameter.
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
@@ -28,6 +34,11 @@ export default async function handler(
     let page = DEFAULT_PAGE;
     if (req.query.page) {
         page = parseInt(req.query.page as string);
+    }
+
+    let filterOutDesolates = DEFAULT_FILTER_OUT_DESOLATES;
+    if (req.query.filterOutDesolates) {
+        filterOutDesolates = !!parseInt(req.query.filterOutDesolates as string);
     }
 
     if (page <= 0) {
@@ -63,7 +74,7 @@ export default async function handler(
         }
     );
 
-    tokens = await parseNFTsFromTokens(tokens);
+    tokens = await parseNFTsFromTokens(tokens, filterOutDesolates);
     totalCount = tokens.length;
 
     // If page does not exist
@@ -125,8 +136,12 @@ export default async function handler(
 }
 
 // This function parses out SPL Tokens which are not NFTs (decimals 0, amount 1)
-async function parseNFTsFromTokens(tokens: Array<any>) {
+async function parseNFTsFromTokens(
+    tokens: Array<any>,
+    filterOutDesolates: boolean
+) {
     let ret: Array<any> = [];
+
     tokens.forEach((token) => {
         if (
             token.account.data.parsed.info.tokenAmount.decimals === 0 &&
@@ -135,6 +150,16 @@ async function parseNFTsFromTokens(tokens: Array<any>) {
             ret.push(token);
         }
     });
+
+    if (filterOutDesolates) {
+        // TODO use a more efficient data structure
+        const desolateTokenList = Array.from(tokenIdToMintHashMap.values());
+        ret = ret.filter((token) => {
+            return !desolateTokenList.includes(
+                token.account.data.parsed.info.mint
+            );
+        });
+    }
 
     return ret;
 }
@@ -159,7 +184,7 @@ async function fetchMetadataForMintHash(
             return null;
         }
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return null;
     }
 }

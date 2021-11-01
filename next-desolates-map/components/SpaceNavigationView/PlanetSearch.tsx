@@ -9,6 +9,7 @@ export default function PlanetSearch() {
         p5,
         cam,
         setOngoingCamMov,
+        setSelectedPlanet,
         changeCurrentCluster,
     } = useContext(SpaceRendererContext);
 
@@ -25,6 +26,7 @@ export default function PlanetSearch() {
                 p5!,
                 cam!,
                 setOngoingCamMov,
+                setSelectedPlanet,
                 celestialObjects,
                 cluster,
                 changeCurrentCluster
@@ -41,6 +43,7 @@ export default function PlanetSearch() {
             p5!,
             cam!,
             setOngoingCamMov,
+            setSelectedPlanet,
             celestialObjects,
             cluster,
             changeCurrentCluster

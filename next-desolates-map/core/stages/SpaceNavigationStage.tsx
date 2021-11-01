@@ -75,8 +75,10 @@ function handleCameraMovement(
     }
     let x, zMove;
 
-    // ORIGINAL HAS 3 ARGS window.p5.orbitControl(1, 1, 0.05);
-    p5.orbitControl(1, 1);
+    // TODO: remove ts-ignore once upstream package is fixed
+    // See https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/56905
+    // @ts-ignore
+    p5.orbitControl(1, 1, 0.05);
     p5.perspective(p5.PI / 3, p5.width / p5.height, 1, skyboxRadius * 2);
 
     if (p5.keyIsDown(p5.LEFT_ARROW)) {
