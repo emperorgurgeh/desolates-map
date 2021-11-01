@@ -1,7 +1,7 @@
 // import Sketch from "react-p5";
 import p5Types, { Camera } from "p5";
 import dynamic from "next/dynamic";
-import { useCallback, useContext, useEffect, useRef } from "react";
+import { useContext, useRef } from "react";
 
 import { Clusters, SpaceRendererContext, Stages } from "../../pages/_app";
 
@@ -15,7 +15,6 @@ import Planet from "../../core/modules/Planet";
 
 import { addScreenPositionFunction } from "../../js/lib/3dposition";
 import { drawClusterTransitionStage } from "../../core/stages/ClusterTransitionStage";
-import { Cluster } from "../../core/modules/Cluster";
 import CelestialObject from "../../core/modules/CelestialObject";
 
 const Sketch = dynamic(import("react-p5"), {
