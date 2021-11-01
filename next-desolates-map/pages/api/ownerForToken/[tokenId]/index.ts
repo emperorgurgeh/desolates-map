@@ -34,7 +34,7 @@ export default async function handler(
 
         console.log("Fetching all mint transactions for Candy Machine");
         const allMintsCandyMachine = await fetchHashTable(
-            candyMachineIds.get(4)!,
+            candyMachineIds.get(candyMachineIds.size)!,
             true
         );
 
