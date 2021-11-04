@@ -8,7 +8,7 @@ export function drawClusterSelectionStage(
 ) {
     p5.background(0, 0, 0);
     p5.lights();
-    p5.ambientLight(64);
+    p5.ambientLight(128);
 
     // Sky box
     p5.texture(skyboxImg);

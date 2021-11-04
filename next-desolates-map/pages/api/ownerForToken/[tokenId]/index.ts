@@ -38,6 +38,22 @@ export default async function handler(
             true
         );
 
+        // Uncomment to print new lines for the mints const
+        // console.log("Missing token mints:");
+        // for (let i = 0; i < allMintsCandyMachine.length; i++) {
+        //     if (
+        //         !tokenIdToMintHashMap.has(
+        //             parseTokenID(allMintsCandyMachine[i].data.data.name)
+        //         )
+        //     ) {
+        //         console.log(
+        //             `    [${parseTokenID(
+        //                 allMintsCandyMachine[i].data.data.name
+        //             )}, "${allMintsCandyMachine[i].data.mint}"],`
+        //         );
+        //     }
+        // }
+
         for (let i = 0; i < allMintsCandyMachine.length; i++) {
             if (
                 parseTokenID(allMintsCandyMachine[i].data.data.name) === tokenId

@@ -208,9 +208,10 @@ export default function RenderController() {
     }
 
     function setup(p5: p5Types, canvasParentRef: Element) {
-        p5.createCanvas(p5.windowWidth, p5.windowHeight, p5.WEBGL).parent(
-            canvasParentRef
-        );
+        const canvas = p5
+            .createCanvas(p5.windowWidth, p5.windowHeight, p5.WEBGL)
+            .parent(canvasParentRef)
+            .id("p5canvas");
 
         let tempCamp = p5.createCamera();
         setCam(tempCamp);
@@ -228,6 +229,15 @@ export default function RenderController() {
             "data/second-mission-second-addendum.json",
             "data/third-mission.json",
         ]);
+
+        // TODO: work around firefox bug that doesn'r properly position
+        // canvas under parent
+        const isFirefox = /firefox/i.test(navigator.userAgent);
+        if (isFirefox) {
+            setTimeout(() => {
+                p5.select("#p5canvas")!.parent(canvasParentRef);
+            }, 100);
+        }
     }
 
     function draw(p5: p5Types) {
