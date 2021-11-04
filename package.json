@@ -1,5 +1,0 @@
-{
-  "dependencies": {
-    "@solana/spl-token-registry": "^0.2.286"
-  }
-}

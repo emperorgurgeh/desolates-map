@@ -1,38 +1,30 @@
-Project's kinda simple
-* No build infrastructure
-* List of minted NFTs is stored in /public/data/...
+The desolates map is built using three main technologies:
 
-## Generate JSON metadata for new drops
+-   The map itself uses p5js, a visual rendering library
+-   The project is wrapped on a nextjs container
+-   Tailwind is used for CSS styling
 
-To generate more JSON files for the upcoming NFT drops, run:
-```node fetch-nft-info.js <input_file> <output_file>```
+To install dependencies, run:
 
-Where:
-* input file must be a metaplex cache data from the NFT mint
-* output file should eventually go into /public/data and later on imported in the code from main.json
+```
+cd next-desolates-map
+yarn
+```
 
-## Set up
+To develop and use a local server, run (from within the next-desolates-map folder):
 
-First create a project in Firebase and enable hosting.
+```
+yarn dev
+```
 
-Then just install the firebase CLI and log in, [following these instructions](https://firebase.google.com/docs/cli#setup_update_cli).
+To build a compiled version:
 
-## Develop
+```
+yarn build
+```
 
-To view the code live in your browser...
+And for uploading, follow the rules of your hosting. If you use vercel, simply push to your github repo or run
 
-```firebase serve```
-
-(Optional) If you're customizing tailwind, then run the following command to automatically recompile changes
-
-```npx tailwindcss -o public/css/vendor/tailwind.css --watch```
-
-## Deploy
-
-First ensure tailwind is compiled, with:
-
-```npx tailwindcss -o public/css/vendor/tailwind.css ```
-
-Then, deploy the 'public' folder wherever you please. The project's set up to deploy with firebase hosting (it's free and awesome). If you want to use that just run:
-
-```firebase deploy```
+```
+vercel --prod
+```
