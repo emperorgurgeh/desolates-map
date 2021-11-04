@@ -92,9 +92,23 @@ export default function PlanetInfo({
                                 <p className="mb-2 text-lg">Planet info</p>
                                 <button
                                     onClick={visitPlanet}
-                                    className="absolute top-0 right-0 w-16 h-6 p-1 m-auto text-sm text-center transition-colors duration-200 rounded-lg hover:text-white hover:bg-primary outline-cool backdrop-filter backdrop-blur bg-faded"
+                                    className="absolute top-0 right-0 w-auto h-6 p-0 m-auto text-sm text-center transition-colors duration-200 rounded-lg hover:text-white hover:bg-primary"
+                                    title="Zoom in planet"
                                 >
-                                    VISIT
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="w-6 h-6"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
+                                        />
+                                    </svg>
                                 </button>
                             </div>
 
@@ -120,6 +134,18 @@ export default function PlanetInfo({
                                 <span className="select-text">
                                     #{selectedPlanet.name.split("#")[1]}
                                 </span>
+                                <Link href={selectedPlanet.link}>
+                                    <a
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            e.nativeEvent.stopImmediatePropagation();
+                                        }}
+                                        className="pl-2 text-sm text-left underline"
+                                        target="_blank"
+                                    >
+                                        (View hash)
+                                    </a>
+                                </Link>
                             </p>
                             <p>
                                 Owner:
@@ -157,16 +183,17 @@ export default function PlanetInfo({
                                 </Link>
                             </p>
                             <div className="flex flex-row mt-2">
-                                <Link href={selectedPlanet.link}>
+                                <Link
+                                    href={`https://planet.desolate.space/${selectedPlanet.id}`}
+                                >
                                     <a
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             e.nativeEvent.stopImmediatePropagation();
                                         }}
                                         className="p-2 mr-3 text-sm text-center transition-colors duration-200 rounded-lg hover:text-white hover:bg-primary w-36 outline-cool backdrop-filter backdrop-blur bg-faded"
-                                        target="_blank"
                                     >
-                                        VIEW HASH
+                                        OPEN (3D)
                                     </a>
                                 </Link>
                                 <button

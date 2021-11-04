@@ -26,7 +26,7 @@ export function drawClusterTransitionStage(
     p5.blendMode(p5.LIGHTEST);
 
     p5.lights();
-    p5.ambientLight(64);
+    p5.ambientLight(128);
 
     p5.push();
     p5.fill("white");
