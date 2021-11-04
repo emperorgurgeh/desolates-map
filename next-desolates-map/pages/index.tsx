@@ -4,6 +4,7 @@ import { CSSTransition, SwitchTransition } from "react-transition-group";
 import ClusterSelection from "../components/ClusterSelectionView/ClusterSelection";
 import Loader from "../components/Loader/Loader";
 import SpaceNavigation from "../components/SpaceNavigationView/SpaceNavigation";
+import SoundController from "../components/SoundController/SoundController";
 
 import { SpaceRendererContext, Stages } from "./_app";
 
@@ -36,6 +37,7 @@ const Home: NextPage = (spaceRenderer) => {
                     </>
                 </CSSTransition>
             </SwitchTransition>
+            <SoundController />
         </>
     );
 };
