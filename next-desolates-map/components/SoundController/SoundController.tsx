@@ -1,5 +1,6 @@
 import Sound from "react-sound";
 import React, { SyntheticEvent } from "react";
+import { ProvingProcess } from "@metaplex/js";
 
 export default function SoundController() {
     const [isMusicPlaying, setIsMusicPlaying] = React.useState(false);
@@ -78,6 +79,13 @@ export default function SoundController() {
                 autoLoad={true}
                 loop={true}
                 volume={30}
+                // @ts-ignore
+                onPlaying={(soundPlayer) => {
+                    // Don't ask why... but without this the audio doesn't loop  ¯\_(ツ)_/¯
+                    if (soundPlayer.instanceCount == 0) {
+                        soundPlayer.instanceCount++;
+                    }
+                }}
             />
         </>
     );
