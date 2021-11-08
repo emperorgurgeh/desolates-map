@@ -1,6 +1,5 @@
 import Sound from "react-sound";
 import React, { SyntheticEvent } from "react";
-import { ProvingProcess } from "@metaplex/js";
 
 export default function SoundController() {
     const [isMusicPlaying, setIsMusicPlaying] = React.useState(false);
