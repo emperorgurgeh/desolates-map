@@ -228,6 +228,8 @@ export default function RenderController() {
             "data/second-mission-addendum.json",
             "data/second-mission-second-addendum.json",
             "data/third-mission.json",
+            "data/fourth-mission.json",
+            "data/fourth-mission-first-addendum.json",
         ]);
 
         // TODO: work around firefox bug that doesn'r properly position
