@@ -2,14 +2,16 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 
 import RenderController from "../components/RenderController/RenderController";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import p5Types, { Camera, Font, Image } from "p5";
-import p5 from "p5";
 import Planet from "../core/modules/Planet";
 import {
     _loadClusterTransitionStage,
     _unloadClusterTransitionStage,
 } from "../core/stages/ClusterTransitionStage";
+import { useRouter } from "next/dist/client/router";
+
+import * as Fathom from "fathom-client";
 
 export const SpaceRendererContext = createContext<ISpaceRenderer>(
     {} as ISpaceRenderer
@@ -230,6 +232,32 @@ function MyApp({ Component, pageProps }: AppProps) {
                 // _unloadSpaceNavigationStage();
                 break;
         }
+    }
+
+    if (
+        process.env.NEXT_PUBLIC_FATHOM_SITE_ID &&
+        process.env.NEXT_PUBLIC_SITE_URL
+    ) {
+        const router = useRouter();
+
+        useEffect(() => {
+            Fathom.load(process.env.NEXT_PUBLIC_FATHOM_SITE_ID!, {
+                includedDomains: [process.env.NEXT_PUBLIC_SITE_URL!],
+            });
+
+            function onRouteChangeComplete() {
+                Fathom.trackPageview();
+            }
+            // Record a pageview when route changes
+            router.events.on("routeChangeComplete", onRouteChangeComplete);
+
+            // Unassign event listener
+            return () => {
+                router.events.off("routeChangeComplete", onRouteChangeComplete);
+            };
+        }, []);
+    } else {
+        console.warn("Fathom not configured");
     }
 
     return (
