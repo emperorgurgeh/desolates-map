@@ -88,7 +88,7 @@ export default class Planet extends CelestialObject {
             }
         }
 
-       p5.pop();
+        p5.pop();
     }
 
     isInCluster(cluster: string) {
