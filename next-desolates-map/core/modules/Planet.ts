@@ -66,6 +66,17 @@ export default class Planet extends CelestialObject {
         const detail = this._getLevelOfDetail(p5, cam, lowres);
         p5.translate(this.x, this.y, this.z);
 
+        p5.push();
+
+        // Rotate each planet
+        p5.rotateX(this.id / 360);
+        p5.rotateY(this.id / 180);
+
+        p5.texture(this.textureImg);
+        p5.sphere(this.radius, detail, detail);
+
+        p5.pop();
+
         // Draw labels & selection ring
         if (stage == Stages.SPACE_NAVIGATION) {
             if (isMouseOver || this.selected) {
@@ -77,15 +88,7 @@ export default class Planet extends CelestialObject {
             }
         }
 
-        // Rotate each planet
-        p5.rotateX(this.id / 360);
-        p5.rotateY(this.id / 180);
-
-        p5.texture(this.textureImg);
-
-        p5.sphere(this.radius, detail, detail);
-
-        p5.pop();
+       p5.pop();
     }
 
     isInCluster(cluster: string) {
