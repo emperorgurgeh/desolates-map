@@ -68,9 +68,8 @@ export default class Planet extends CelestialObject {
 
         p5.push();
 
-        // Rotate each planet
-        p5.rotateX(this.id / 360);
-        p5.rotateY(this.id / 180);
+        // Rotate each planet for a different texture
+        p5.rotateY((p5.TWO_PI * this.id) / 360);
 
         p5.texture(this.textureImg);
         p5.sphere(this.radius, detail, detail);
