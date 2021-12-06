@@ -12,6 +12,7 @@ import {
 import { useRouter } from "next/dist/client/router";
 
 import * as Fathom from "fathom-client";
+import Skybox from "../core/modules/Skybox";
 
 export const SpaceRendererContext = createContext<ISpaceRenderer>(
     {} as ISpaceRenderer
@@ -51,13 +52,11 @@ interface ISpaceRenderer {
     planetTextures: any;
     setPlanetTextures: Function;
 
-    skyboxImg?: Image;
-    setSkyboxImg: Function;
+    skybox?: Skybox;
+    setSkybox: Function;
     sunImg?: Image;
     setSunImg: Function;
 
-    skyboxRadius: number;
-    setSkyboxRadius: Function;
     sunRadius: number;
     setSunRadius: Function;
     planetRadius: number;
@@ -131,10 +130,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         Image | undefined
     >(undefined);
     const [planetTextures, setPlanetTextures] = useState<any>({});
-    const [skyboxImg, setSkyboxImg] = useState<Image | undefined>(undefined);
+    const [skybox, setSkybox] = useState<Skybox | undefined>(undefined);
     const [sunImg, setSunImg] = useState<Image | undefined>(undefined);
 
-    const [skyboxRadius, setSkyboxRadius] = useState<number>(5000);
     const [sunRadius, setSunRadius] = useState<number>(150);
     const [planetRadius, setPlanetRadius] = useState<number>(10);
 
@@ -282,12 +280,10 @@ function MyApp({ Component, pageProps }: AppProps) {
                 setPlanetSelectedTexture,
                 planetTextures,
                 setPlanetTextures,
-                skyboxImg,
-                setSkyboxImg,
+                skybox,
+                setSkybox,
                 sunImg,
                 setSunImg,
-                skyboxRadius,
-                setSkyboxRadius,
                 sunRadius,
                 setSunRadius,
                 planetRadius,

@@ -27,6 +27,16 @@ To develop and use a local server, run (from within the next-desolates-map folde
 yarn dev
 ```
 
+## Generating and changing the skybox
+
+The skybox was generated with [this tool](https://tools.wwwtyro.net/space-3d/index.html), and later all the PNGs were optimized using the imageoptim-cli tool, with the following command:
+
+```
+imageoptim --imagealpha '**/*.png'
+```
+
+To update the skybox just replace the corresponding images in the public/assets/skybox folder
+
 ## Prepare for release
 
 To build a compiled version:

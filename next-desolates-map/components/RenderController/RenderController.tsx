@@ -16,6 +16,7 @@ import Planet from "../../core/modules/Planet";
 import { addScreenPositionFunction } from "../../js/lib/3dposition";
 import { drawClusterTransitionStage } from "../../core/stages/ClusterTransitionStage";
 import CelestialObject from "../../core/modules/CelestialObject";
+import Skybox from "../../core/modules/Skybox";
 
 const Sketch = dynamic(import("react-p5"), {
     ssr: false,
@@ -29,7 +30,7 @@ export default function RenderController() {
         p5,
         setP5,
         textureSuffix,
-        setSkyboxImg,
+        setSkybox,
         sunRadius,
         sunImg,
         setSunImg,
@@ -46,8 +47,7 @@ export default function RenderController() {
         changeStage,
         setCluster,
         planetRadius,
-        skyboxImg,
-        skyboxRadius,
+        skybox,
         ongoingCamMov,
         setOngoingCamMov,
         cluster,
@@ -186,9 +186,16 @@ export default function RenderController() {
     function preload(p5: p5Types) {
         setP5(p5);
 
-        setSkyboxImg(
-            p5.loadImage(`assets/skybox/eso_milkyway${textureSuffix}.jpg`)
-        );
+        const skyboxTextures = new Map<string, p5Types.Image>([
+            ["left", p5.loadImage("/assets/skybox/left.png")],
+            ["right", p5.loadImage("/assets/skybox/right.png")],
+            ["top", p5.loadImage("/assets/skybox/top.png")],
+            ["bottom", p5.loadImage("/assets/skybox/bottom.png")],
+            ["front", p5.loadImage("/assets/skybox/front.png")],
+            ["back", p5.loadImage("/assets/skybox/back.png")],
+        ]);
+
+        setSkybox(new Skybox(3000, skyboxTextures));
 
         setSunImg(p5.loadImage("assets/sprites/lensflare0.png"));
 
@@ -252,7 +259,7 @@ export default function RenderController() {
                 // drawLoadingScreen();
                 break;
             case Stages.CLUSTER_SELECTION:
-                drawClusterSelectionStage(p5, cam!, skyboxImg!, skyboxRadius);
+                drawClusterSelectionStage(p5, cam!, skybox!);
                 break;
             case Stages.CLUSTER_TRANSITION:
                 drawClusterTransitionStage(
@@ -271,16 +278,14 @@ export default function RenderController() {
                     jetbrainsMonoFont!,
                     lowres,
                     stage,
-                    skyboxImg!,
-                    skyboxRadius
+                    skybox!
                 );
                 break;
             case Stages.SPACE_NAVIGATION:
                 drawSpaceNavigationStage(
                     p5,
                     cam!,
-                    skyboxImg!,
-                    skyboxRadius,
+                    skybox!,
                     celestialObjects,
                     setCelestialObjects,
                     ongoingCamMov,
