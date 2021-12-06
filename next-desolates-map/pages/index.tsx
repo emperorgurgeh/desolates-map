@@ -5,6 +5,8 @@ import ClusterSelection from "../components/ClusterSelectionView/ClusterSelectio
 import Loader from "../components/Loader/Loader";
 import SpaceNavigation from "../components/SpaceNavigationView/SpaceNavigation";
 import SoundController from "../components/SoundController/SoundController";
+import { Helmet } from "react-helmet";
+
 
 import { SpaceRendererContext, Stages } from "./_app";
 
@@ -13,6 +15,10 @@ const Home: NextPage = (spaceRenderer) => {
 
     return (
         <>
+            <Helmet>
+                <title>DESOLATEs Map</title>
+                <meta name="description" content="3D map of all the planets in the DESOLATEs metaverse"/>
+            </Helmet>
             <h1
                 className="absolute z-10 text-3xl tracking-tighter text-white select-none top-6 backdrop-blur backdrop-filter"
                 style={{ fontFamily: "Zen Dots" }}
