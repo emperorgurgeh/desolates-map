@@ -7,7 +7,6 @@ import SpaceNavigation from "../components/SpaceNavigationView/SpaceNavigation";
 import SoundController from "../components/SoundController/SoundController";
 import { Helmet } from "react-helmet";
 
-
 import { SpaceRendererContext, Stages } from "./_app";
 
 const Home: NextPage = (spaceRenderer) => {
