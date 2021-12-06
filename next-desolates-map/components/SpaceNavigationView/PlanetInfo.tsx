@@ -5,6 +5,7 @@ import { CSSTransition, SwitchTransition } from "react-transition-group";
 import CameraMovement from "../../core/modules/CameraMovement";
 import { SpaceRendererContext } from "../../pages/_app";
 import Loader from "../Loader/Loader";
+import UserProfileChip from "./OwnerProfileChip";
 
 export default function PlanetInfo({
     showInhabitants,
@@ -63,10 +64,14 @@ export default function PlanetInfo({
             }
 
             setLoadingPlanetImage(true);
-            setOwnerAddress(null);
-            setLoadingOwner(true);
+
             if (!selectedPlanet?.ownerAddress) {
+                setOwnerAddress(null);
+                setLoadingOwner(true);
                 fetchPlanetOwner();
+            } else {
+                setLoadingOwner(false);
+                setOwnerAddress(selectedPlanet.ownerAddress);
             }
         }
     }, [selectedPlanet]);
@@ -147,44 +152,14 @@ export default function PlanetInfo({
                                     </a>
                                 </Link>
                             </p>
-                            <p>
-                                Owner:
-                                <Link
-                                    href={`https://explorer.solana.com/address/${selectedPlanet?.ownerAddress}`}
-                                >
-                                    <a
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            e.nativeEvent.stopImmediatePropagation();
-                                        }}
-                                        target="_blank"
-                                        className={`${
-                                            loadingOwner ? "" : "underline"
-                                        } select-text`}
-                                    >
-                                        {selectedPlanet?.ownerAddress ? (
-                                            `${selectedPlanet?.ownerAddress.substring(
-                                                0,
-                                                20
-                                            )}...`
-                                        ) : (
-                                            <>
-                                                {loadingOwner
-                                                    ? "LOADING"
-                                                    : ownerAddress
-                                                    ? `${ownerAddress.substring(
-                                                          0,
-                                                          20
-                                                      )}...`
-                                                    : "Unclaimed"}
-                                            </>
-                                        )}
-                                    </a>
-                                </Link>
-                            </p>
+                            <UserProfileChip
+                                loadingOwner={loadingOwner}
+                                ownerAddress={ownerAddress}
+                                selectedPlanet={selectedPlanet}
+                            />
                             <div className="flex flex-row mt-2">
                                 <Link
-                                    href={`https://planet.desolate.space/${selectedPlanet.id}`}
+                                    href={`https://planet.desolate.space/beta/${selectedPlanet.id}`}
                                 >
                                     <a
                                         onClick={(e) => {

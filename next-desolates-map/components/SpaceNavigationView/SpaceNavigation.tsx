@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CSSTransition } from "react-transition-group";
+import { preventEventPropagation } from "../../utils/displayUtils";
 import ClusterSelection from "./ClusterSelection";
 import Inhabitants from "./Inhabitants";
 import PlanetInfo from "./PlanetInfo";
@@ -7,12 +8,6 @@ import PlanetSearch from "./PlanetSearch";
 
 export default function SpaceNavigation() {
     const [showInhabitants, setShowInhabitants] = useState(false);
-
-    // Stop propagation of an event so it doesn't go to the canvas
-    function preventEventPropagation(e: any) {
-        e.stopPropagation();
-        e.nativeEvent.stopImmediatePropagation();
-    }
 
     return (
         <div

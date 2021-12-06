@@ -230,9 +230,10 @@ export default function RenderController() {
             "data/third-mission.json",
             "data/fourth-mission.json",
             "data/fourth-mission-first-addendum.json",
+            "data/fourth-mission-second-addendum.json",
         ]);
 
-        // TODO: work around firefox bug that doesn'r properly position
+        // Work around firefox bug that doesn't properly position
         // canvas under parent
         const isFirefox = /firefox/i.test(navigator.userAgent);
         if (isFirefox) {
