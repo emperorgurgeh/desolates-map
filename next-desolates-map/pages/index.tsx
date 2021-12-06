@@ -20,7 +20,7 @@ const Home: NextPage = (spaceRenderer) => {
             </Head>
             <h1
                 className="absolute z-10 text-3xl tracking-tighter text-white select-none top-6 backdrop-blur backdrop-filter"
-                style={{ fontFamily: "Zen Dots" }}
+                style={{ fontFamily: "Nasalization Rg" }}
             >
                 DESOLATEs
             </h1>

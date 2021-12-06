@@ -5,7 +5,8 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                cool: 'Share Tech Mono, monospace'
+                cool: 'Share Tech Mono, monospace',
+                serif: ['Nasalization Rg', 'serif'],
             },
             textColor: {
                 primary: '#1BFFF1E6',
