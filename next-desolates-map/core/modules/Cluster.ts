@@ -25,6 +25,6 @@ export const Cluster = {
             return ((n % m) + m) % m;
         };
 
-        return pos.map((coord: number) => mod(coord, 1000) - 500);
+        return pos.map((coord: number) => (mod(coord, 1000) - 500) * 2);
     },
 };

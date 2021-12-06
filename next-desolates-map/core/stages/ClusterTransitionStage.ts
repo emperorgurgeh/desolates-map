@@ -1,5 +1,6 @@
 import p5Types, { Camera, Font, Image } from "p5";
 import { Clusters, Stages } from "../../pages/_app";
+import Skybox from "../modules/Skybox";
 
 const INITIAL_WARP_SPEED = 2;
 const WARP_SPEED_INC_PER_FRAME = 0.3;
@@ -20,10 +21,12 @@ export function drawClusterTransitionStage(
     jetbrainsMonoFont: Font,
     lowres: boolean,
     stage: Stages,
-    skyboxImg: Image,
-    skyboxRadius: number
+    skybox: Skybox
 ) {
     p5.blendMode(p5.LIGHTEST);
+
+    // Sky box
+    skybox.draw(p5);
 
     p5.lights();
     p5.ambientLight(128);
@@ -33,11 +36,6 @@ export function drawClusterTransitionStage(
     p5.translate(frozenCamCenter.x, frozenCamCenter.y, frozenCamCenter.z);
     p5.sphere(20);
     p5.pop();
-
-    // Sky box
-    p5.texture(skyboxImg!);
-    p5.noStroke();
-    p5.sphere(skyboxRadius, 24, 24);
 
     // Planets & sun
     // Must be sorted by distance for alpha to work

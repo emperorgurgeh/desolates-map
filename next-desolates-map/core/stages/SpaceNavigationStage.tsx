@@ -1,9 +1,8 @@
-// const SKYBOX_RADIUS = 5000;
-
 import p5Types, { Camera, Font, Image } from "p5";
 import { useContext } from "react";
 import { Clusters, SpaceRendererContext, Stages } from "../../pages/_app";
 import CameraMovement from "../modules/CameraMovement";
+import Skybox from "../modules/Skybox";
 
 // TODO refactor: this should be a class extending a generic Stage class,
 // With draw, mouseclicked, load and unload functions
@@ -12,8 +11,7 @@ export default function SpaceNavigationStage() {}
 export function drawSpaceNavigationStage(
     p5: p5Types,
     cam: Camera,
-    skyboxImg: Image,
-    skyboxRadius: number,
+    skybox: Skybox,
     celestialObjects: Array<any>,
     setCelestialObjects: Function,
     ongoingCamMov: CameraMovement,
@@ -27,17 +25,14 @@ export function drawSpaceNavigationStage(
     p5.background(0, 0, 0);
     p5.cursor(p5.CROSS);
 
+    // Sky box
+    skybox.draw(p5);
+
     p5.lights();
     p5.ambientLight(128);
 
-    // Sky box
-    p5.texture(skyboxImg!);
-    p5.noStroke();
-    p5.sphere(skyboxRadius, 24, 24);
-
     // Planets & sun
     // Must be sorted by distance for alpha to work
-
     setCelestialObjects(
         celestialObjects.sort(
             (p1, p2) => p2.getDistWithCam(p5, cam) - p1.getDistWithCam(p5, cam)
@@ -57,7 +52,7 @@ export function drawSpaceNavigationStage(
         );
 
     // Move camera
-    handleCameraMovement(p5, cam, ongoingCamMov, skyboxRadius);
+    handleCameraMovement(p5, cam, ongoingCamMov, skybox.radius);
 }
 
 let oldCamPos = [0, 0, 0];
@@ -68,7 +63,7 @@ function handleCameraMovement(
     ongoingCamMov: any,
     skyboxRadius: number
 ) {
-    p5.perspective(p5.PI / 3, p5.width / p5.height, 1, skyboxRadius * 2);
+    p5.perspective(p5.PI / 3, p5.width / p5.height, 1, skyboxRadius * 3);
 
     if (ongoingCamMov && !ongoingCamMov.isEnded(p5)) {
         ongoingCamMov.tick(p5, cam);
@@ -110,7 +105,7 @@ function handleCameraMovement(
             0,
             0
         ) >
-        skyboxRadius * 0.75
+        skyboxRadius * 0.85
     ) {
         cam.setPosition(oldCamPos[0], oldCamPos[1], oldCamPos[2]);
     } else {
