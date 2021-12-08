@@ -19,8 +19,7 @@ const Home: NextPage = (spaceRenderer) => {
                 <meta name="description" content="3D map of all the planets in the DESOLATEs metaverse" />
             </Head>
             <h1
-                className="absolute z-10 text-3xl tracking-tighter text-white select-none top-6 backdrop-blur backdrop-filter"
-                style={{ fontFamily: "Zen Dots" }}
+                className="absolute z-10 text-3xl tracking-tighter text-white select-none top-6 backdrop-blur backdrop-filter font-nasalization"
             >
                 DESOLATEs
             </h1>
