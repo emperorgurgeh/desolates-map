@@ -6,8 +6,8 @@ module.exports = {
         extend: {
             fontFamily: {
                 cool: 'Share Tech Mono, monospace',
-                serif: ['Nasalization Rg', 'serif'],
-            },
+                nasalization: ['Nasalization Rg', 'serif'],
+            }, 
             textColor: {
                 primary: '#1BFFF1E6',
             },
