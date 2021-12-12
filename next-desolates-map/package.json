@@ -1,6 +1,6 @@
 {
     "name": "next-desolates-map",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "private": true,
     "scripts": {
         "dev": "next dev",
@@ -9,8 +9,6 @@
         "lint": "next lint"
     },
     "dependencies": {
-        "@metaplex/js": "^2.0.1",
-        "@project-serum/anchor": "^0.17.1-beta.2",
         "@types/react-transition-group": "^4.4.4",
         "autoprefixer": "^10.3.7",
         "fathom-client": "^3.2.0",
