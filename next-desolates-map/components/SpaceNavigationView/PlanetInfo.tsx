@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
 import CameraMovement from "../../core/modules/CameraMovement";
 import { SpaceRendererContext } from "../../pages/_app";
+import API from "../../utils/API";
 import Loader from "../Loader/Loader";
 import UserProfileChip from "./OwnerProfileChip";
 
@@ -20,9 +21,14 @@ export default function PlanetInfo({
     const [loadingPlanetImage, setLoadingPlanetImage] = useState(true);
 
     async function fetchPlanetOwner() {
-        const res = await fetch(
-            `/api/ownerForToken/${selectedPlanet!.name.split("#")[1]}`
-        );
+        if (!selectedPlanet) {
+            console.warn(
+                "Attempted to fetch planet owner with no planet selected"
+            );
+            return;
+        }
+
+        const res = await fetch(API.getPlanetOwner(selectedPlanet.id));
 
         if (res.status == 200) {
             const data = await res.json();
@@ -83,6 +89,10 @@ export default function PlanetInfo({
         setShowInhabitants(!showInhabitants);
     }
 
+    const planetImgUrl = selectedPlanet
+        ? API.getImage(selectedPlanet.image, 600, 200)
+        : "";
+
     return (
         <SwitchTransition>
             <CSSTransition
@@ -128,7 +138,7 @@ export default function PlanetInfo({
                                     className={`${
                                         loadingPlanetImage ? "hidden" : "flex"
                                     } w-full h-24`}
-                                    src={selectedPlanet.image}
+                                    src={planetImgUrl}
                                     alt={selectedPlanet.name}
                                     onLoad={planetImageLoaded}
                                 />
