@@ -1,9 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import { SpaceRendererContext } from "../../pages/_app";
+import API from "../../utils/API";
 import Loader from "../Loader/Loader";
 
-const PER_PAGE = 3;
+const PER_PAGE = 5;
 
 export default function Inhabitants() {
     const { selectedPlanet } = useContext(SpaceRendererContext);
@@ -18,8 +19,15 @@ export default function Inhabitants() {
 
     async function fetchNFTs() {
         setLoading(true);
+
+        if (!selectedPlanet) {
+            console.warn("Attempted to fetch NFTs with no planet selected");
+            setLoading(false);
+            return;
+        }
+
         const res = await fetch(
-            `/api/allNFTsForOwner/${selectedPlanet?.ownerAddress}?perPage=${PER_PAGE}&page=${page}&includeTotal=1&filterOutDesolates=1`
+            API.getPlanetNFTs(selectedPlanet.id, PER_PAGE, page)
         );
 
         if (mounted) {
@@ -50,12 +58,13 @@ export default function Inhabitants() {
         <div className="z-10 flex flex-col items-center px-3 pt-2 pb-3 text-left rounded-lg opacity-100 text-primary font-cool w-80 backdrop-filter backdrop-blur outline-cool shadow-cool bg-faded">
             <p className="self-start mb-2 text-lg">Inhabitants</p>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col justify-center">
                 {nfts.map((nft: any) => {
                     return (
                         <AnNFT
-                            key={nft.name}
+                            key={nft.mint_hash}
                             image={nft.image}
+                            imageMimetype={nft.image_mimetype}
                             name={nft.name}
                         />
                     );
@@ -83,10 +92,16 @@ export default function Inhabitants() {
     );
 }
 
-function AnNFT({ image, name }: any) {
+function AnNFT({ image, name, imageMimetype }: any) {
+    const isGif =
+        image && (image.endsWith("ext=gif") || imageMimetype === "image/gif");
+    const imageUrl = isGif
+        ? API.getImage(image, 200, 200)
+        : API.getImage(image, 500, 500);
+
     return (
-        <div className="relative flex w-full mb-2 overflow-hidden rounded-lg">
-            <img src={image} />
+        <div className="relative mb-2 overflow-hidden rounded-lg w-fit">
+            <img className="m-auto" src={imageUrl} />
 
             <p className="absolute text-xs px-0.5 bg-black text-primary top-2 left-2">
                 {name}
