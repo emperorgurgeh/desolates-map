@@ -17,6 +17,7 @@ import { addScreenPositionFunction } from "../../js/lib/3dposition";
 import { drawClusterTransitionStage } from "../../core/stages/ClusterTransitionStage";
 import CelestialObject from "../../core/modules/CelestialObject";
 import Skybox from "../../core/modules/Skybox";
+import API from "../../utils/API";
 
 const Sketch = dynamic(import("react-p5"), {
     ssr: false,
@@ -69,25 +70,17 @@ export default function RenderController() {
 
     const camRef = useRef<Camera>();
 
-    function loadPlanets(sources: Array<string>) {
-        let planets: Array<any> = [];
-        _loadPlanetsRec(sources, 0, planets);
-    }
+    async function loadPlanets() {
+        try {
+            const planetsRawRes = await fetch(API.getPlanets());
+            const planetsJson = await planetsRawRes.json();
 
-    function _loadPlanetsRec(
-        sources: Array<string>,
-        idx: number,
-        planetJson: any
-    ) {
-        if (idx >= sources.length) {
-            _initAfterPlanetsLoad(planetJson);
-        } else {
-            fetch(sources[idx])
-                .then((response) => response.json())
-                .then((json) => {
-                    planetJson = planetJson.concat(json);
-                    _loadPlanetsRec(sources, idx + 1, planetJson);
-                });
+            _initAfterPlanetsLoad(planetsJson);
+        } catch (error) {
+            console.error(error);
+            alert(
+                "Error loading planets. Check your internet connection and try again."
+            );
         }
     }
 
@@ -229,17 +222,7 @@ export default function RenderController() {
         p5.setAttributes("antialias", true);
         addScreenPositionFunction(p5);
 
-        loadPlanets([
-            "data/first-mission.json",
-            "data/second-mission.json",
-            "data/second-mission-addendum.json",
-            "data/second-mission-second-addendum.json",
-            "data/third-mission.json",
-            "data/fourth-mission.json",
-            "data/fourth-mission-first-addendum.json",
-            "data/fourth-mission-second-addendum.json",
-            "data/fourth-mission-third-addendum.json",
-        ]);
+        loadPlanets();
 
         // Work around firefox bug that doesn't properly position
         // canvas under parent
