@@ -87,7 +87,9 @@ export default function RenderController() {
     async function _initAfterPlanetsLoad(planetJson: any) {
         const celestialRet: Array<any> = [];
         planetJson.forEach((p: any) => {
-            const textureImg = planetTextures[p.attributes.palette];
+            const textureImg =
+                planetTextures[p.attributes.palette] ??
+                planetTextures["dystop"];
 
             const planet = new Planet(
                 planetRadius,
