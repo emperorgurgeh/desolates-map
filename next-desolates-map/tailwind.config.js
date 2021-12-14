@@ -24,6 +24,10 @@ module.exports = {
             animation: {
                 fadeIn: "fadeIn .25s ease-in-out",
             },
+            spacing: {
+                "180": "45rem",
+                "176": "44rem",
+            },
             keyframes: {
                 fadeIn: {
                     "0%": { opacity: 0 },
