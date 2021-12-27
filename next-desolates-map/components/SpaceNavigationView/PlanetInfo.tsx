@@ -169,7 +169,7 @@ export default function PlanetInfo({
                             />
                             <div className="flex flex-row mt-2">
                                 <Link
-                                    href={`https://planet.desolate.space/beta/${selectedPlanet.id}`}
+                                    href={`https://www.desolate.space/planet/${selectedPlanet.id}`}
                                 >
                                     <a
                                         onClick={(e) => {
