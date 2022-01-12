@@ -7,10 +7,14 @@ module.exports = {
             fontFamily: {
                 cool: 'Share Tech Mono, monospace',
                 nasalization: ['Nasalization Rg', 'serif'],
+                exo: ["Exo", "sans-serif"],
             }, 
             textColor: {
                 primary: '#1BFFF1E6',
             },
+            colors: {
+                'desolate-bg': '#181133',
+              },
             outline: {
                 cool: "1px solid rgba(27, 255, 241, 0.75)",
             },
@@ -39,5 +43,7 @@ module.exports = {
     variants: {
         extend: {},
     },
-    plugins: [],
+    plugins: [
+        require('@tailwindcss/aspect-ratio'),
+    ],
 }
